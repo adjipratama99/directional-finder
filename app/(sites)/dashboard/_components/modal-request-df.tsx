@@ -38,7 +38,7 @@ export default function ModalRequestDF({ onClose }: { onClose: React.Dispatch<Re
         formData.append("tipe_df", params.tipe_df)
         formData.append("keterangan", params.keterangan!)
         formData.append("teknologi", params.teknologi.join(","))
-        formData.append("wilayah", session?.user.wilayah)
+        formData.append("wilayah", session?.user.wilayah!)
         files.forEach(file => formData.append("uploaded_files", file))
 
         const request = await fetchPost({

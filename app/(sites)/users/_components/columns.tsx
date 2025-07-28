@@ -1,8 +1,11 @@
 import UpdateStatus from "@/components/custom/update-status";
 import { Badge } from "@/components/ui/badge";
 import { GET_USER_LIST } from "@/constant/app";
-import { User } from "@/entities/User";
+import { User } from "@/models/user.model";
+export type UserAttributes = InferAttributes<User>;
+export type UserCreationAttributes = InferCreationAttributes<User>;
 import { ColumnDef } from "@tanstack/react-table";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
 
 export const columnsUser: ColumnDef<User>[] = [
     {

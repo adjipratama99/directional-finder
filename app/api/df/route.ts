@@ -7,7 +7,7 @@ import { mkdirSync, existsSync } from 'fs';
 import { handlerRequest, RequestType } from '@/db/handler';
 import { message_error, message_success } from '@/lib/messages';
 import { ResponseMessage } from '@/types/general';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { getServerSession } from 'next-auth';
 import { requiredKey } from '@/lib/utils';
 

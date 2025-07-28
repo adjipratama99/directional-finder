@@ -62,12 +62,12 @@ export default function useLoadMore<TData = any, TParams = Record<string, any>>(
 
             const total = response?.content?.count || 0
             const results = response?.content?.results || []
-            const hasNext = (pageParam + rowEachPage) < total
+            const hasNext = (pageParam as number + rowEachPage) < total
 
             return {
                 data: results,
-                nextId: hasNext ? (pageParam + rowEachPage) : null,
-                previousId: Math.max(pageParam - rowEachPage, 0)
+                nextId: hasNext ? (pageParam as number + rowEachPage) : null,
+                previousId: Math.max(pageParam as number - rowEachPage, 0)
             }
         },
         initialPageParam: 0,
