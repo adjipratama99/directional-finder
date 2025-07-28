@@ -6,7 +6,7 @@ export const sequelize = new Sequelize(
     process.env.MYSQLUSER!,
     process.env.MYSQLPASSWORD!,
     {
-        host: process.env.MYSQLHOST!,
+        host: process.env.DB_HOST!,
         dialectModule: require('mysql2'),
         dialect: 'mysql',
         logging: false,
