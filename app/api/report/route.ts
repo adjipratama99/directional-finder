@@ -1,4 +1,3 @@
-import { SatuanKerja } from "@/models/SatuanKerja.model";
 import { NextRequest, NextResponse } from "next/server";
 import { DirectionalFinder } from "@/models/directionalFinder.model";
 import { User } from "@/models/user.model";
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest) {
                 {
                     model: DirectionalFinder,
                     where: { status: 2 },
-                    required: false, // biar tetap dapet user meski DF kosong
+                    required: false,
                     attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
                 }
             ],
