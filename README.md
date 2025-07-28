@@ -15,4 +15,4 @@ Install my-project with npm
     
 ## Authors
 
-- [@Bagas Adji Pratama](https://github.com/adjipratama99)
+- [@Bagas Adji Pratama](https://github.com/adjipratama99) 
