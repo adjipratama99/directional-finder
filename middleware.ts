@@ -6,12 +6,13 @@ export default async function middleware(req, event) {
     const token = await getToken({ req })
     const isAuthenticated = !!token
 
-    // Redirect authenticated users away from login/code/scan pages
+    // Redirect authenticated users away from /login pages
     if (
-        (req.nextUrl.pathname.startsWith('/') && isAuthenticated)
+        req.nextUrl.pathname === '/' && isAuthenticated
     ) {
         return NextResponse.redirect(new URL('/dashboard', req.url))
     }
+    
 
     const protectedPaths = ['/users', '/report']
     const isProtected = protectedPaths.some(path =>
