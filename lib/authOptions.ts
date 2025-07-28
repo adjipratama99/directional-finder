@@ -22,6 +22,8 @@ export const authOptions = {
                     };
         
                     if (username && password) {
+                        console.log(process.env.DB_HOST)
+                        console.log(process.env)
                         const request = await handlerRequest({ body: { username, password }, type: "read", modelName, findByKey: "username" }) as User;
                         if(request) {
                             if(request?.password === password) {
