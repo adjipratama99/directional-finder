@@ -1,6 +1,4 @@
 import { SatuanKerja } from "@/models/SatuanKerja.model";
-import { sequelize } from "@/db/connect";
-import { QueryTypes } from "sequelize";
 import { NextRequest, NextResponse } from "next/server";
 import { DirectionalFinder } from "@/models/directionalFinder.model";
 import { User } from "@/models/user.model";
