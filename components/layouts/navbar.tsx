@@ -79,7 +79,7 @@ export default function Header(): React.JSX.Element {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {menuList.map((v, i) => (
-                  v.role.includes(session?.user?.role) && (
+                  v.role.includes(session?.user?.role ?? "") && (
                     <a
                         href={v.url}
                         aria-current="page"
@@ -108,7 +108,7 @@ export default function Header(): React.JSX.Element {
                 <span className="absolute -inset-1.5"></span>
                 <span className="sr-only">Open user menu</span>
                 <div className="py-2 px-3.5 bg-neutral-500 rounded-full text-center">
-                  {getInitials(session?.user?.username)}
+                  {getInitials(session?.user?.username ?? "")}
                 </div>
               </button>
               <div
