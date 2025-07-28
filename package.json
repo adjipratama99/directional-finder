@@ -47,16 +47,17 @@
     "npm": "^11.5.1",
     "pdfjs-dist": "^5.3.93",
     "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-resizable-panels": "^3.0.3",
     "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.7",
     "sonner": "^2.0.6",
     "stream": "^0.0.3",
-    "tailwind-merge": "^3.3.1",
-    "typeorm": "^0.3.25"
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

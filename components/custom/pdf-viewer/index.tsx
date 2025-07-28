@@ -140,7 +140,7 @@ export default function PDFClient({ data }: Props) {
                         </td>
                         <td className="border border-gray-300 p-2 uppercase align-top break-words">
                           <ul className="list-disc pl-5">
-                            {df.teknologi.split(",").map((tech, j) => (
+                            {df.teknologi.map((tech, j) => (
                               <li key={j}>{tech.trim()}</li>
                             ))}
                           </ul>

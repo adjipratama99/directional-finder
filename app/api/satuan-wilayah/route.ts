@@ -1,9 +1,10 @@
-import { message_error, message_success } from '@/lib/messages';
-import { handlerRequest, RequestType, requiredKey } from '@/lib/handlerRequest';
-import { NextRequest, NextResponse } from 'next/server';
-import { ResponseMessage } from '@/types/general';
-import { connectDB } from '@/lib/db';
-import { SatuanKerja } from '@/entities/SatuanKerja';
+import { message_error, message_success } from '@/lib/messages'
+import { handlerRequest, RequestType } from '@/db/handler'
+import { requiredKey } from '@/lib/utils'
+import { NextRequest, NextResponse } from 'next/server'
+import { getTableByModelName } from '@/db/repository'
+import { Sequelize } from 'sequelize'
+import { ModelStatic } from 'sequelize'
 
 const modelName = "SatuanKerja"
 
@@ -11,78 +12,71 @@ export async function POST(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url!)
         const type = searchParams.get('type') as RequestType
-        const body = await req.json(); 
-        const db = await connectDB()
-        const satuanKerja = db.getRepository(SatuanKerja)
+        const body = await req.json()
 
-        // Kalau isUnique true, langsung ambil unique wilayah
+        const { model } = await getTableByModelName(modelName)
+
+        // 🟣 Jika request hanya butuh unique wilayah
         if (body?.isUnique === true) {
-            const uniqueWilayah = await satuanKerja
-            .createQueryBuilder("satuan")
-            .select("DISTINCT satuan.wilayah", "wilayah")
-            .orderBy("satuan.wilayah", "ASC")
-            .getRawMany();
+            const uniqueWilayah = await (model as ModelStatic<any>).findAll({
+                attributes: [
+                    [Sequelize.fn('DISTINCT', Sequelize.col('wilayah')), 'wilayah']
+                ],
+                order: [['wilayah', 'ASC']],
+                raw: true
+            });            
 
+            const results = uniqueWilayah.map(item => item.wilayah)
 
-            const results = uniqueWilayah.map(item => item.wilayah);
-            const response: ResponseMessage<any> = {
+            return NextResponse.json({
                 ...message_success,
                 content: {
                     count: results.length,
                     results,
                 },
-            };
-
-            return NextResponse.json(response);
+            })
         }
 
-        // Validasi biasa
-        if (!(await requiredKey(await requiredKeyByType(type), body))) {
-            return NextResponse.json({ ...message_error, message: "Invalid request parameter" });
+        // 🟠 Validasi body dengan requiredKey
+        const required = await requiredKeyByType(type)
+        const isValid = await requiredKey(required, body)
+        if (!isValid) {
+            return NextResponse.json({
+                ...message_error,
+                message: "Invalid request parameter",
+            })
         }
 
-        // Handle logic get/post/put/delete biasa
-        let desiredKey: string[] = [];
-        if (type === "get") {
-            desiredKey = ["id", "wilayah", "nama_satuan"];
-        }
+        // 🟢 Ambil data sesuai type
+        const desiredKey: string[] = (type === "get") ? ["id", "wilayah", "nama_satuan"] : []
 
-        const request = await handlerRequest({
+        const data = await handlerRequest({
             body,
             type,
             modelName,
             ...(desiredKey.length && { desiredKey }),
-        });
+        })
 
-        const response: ResponseMessage<any> = {
+        return NextResponse.json({
             ...message_success,
-            content: request,
-        };
-
-        return NextResponse.json(response);
+            content: data,
+        })
 
     } catch (err) {
-        console.error("POST error:", err);
-        const response: ResponseMessage<any> = {
+        console.error("POST error:", err)
+        return NextResponse.json({
             ...message_error,
             content: err,
-        };
-        return NextResponse.json(response);
+        })
     }
 }
 
-
 async function requiredKeyByType(type: RequestType): Promise<string[]> {
-    let required: string[] = []
-    switch(type) {
+    switch (type) {
         case "create":
-            required = ["username", "password", "role"];
-            break;
+            return ["username", "password", "role"]
         case "get":
-            required = [];
-            break;
         default:
+            return []
     }
-
-    return required;
 }

@@ -1,9 +1,8 @@
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { getUnixTime } from 'date-fns'
-import { handlerRequest } from '@/lib/handlerRequest'
-import { User } from '@/entities/User'
-import { SessionStrategy } from 'next-auth'
+import { handlerRequest } from '@/db/handler'
+import { User } from '@/models/user.model'
 
 const modelName = "User"
 

@@ -14,3 +14,7 @@ export function getInitials(name: string): string {
       .map(part => part[0].toUpperCase())
       .join("");
 }
+
+export const requiredKey = async (keys: string[], body: Record<string, any>): Promise<boolean> => {
+  return keys.every((key) => body.hasOwnProperty(key) && body[key] !== undefined && body[key] !== null)
+}

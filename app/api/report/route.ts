@@ -1,36 +1,49 @@
-import { SatuanKerja } from "@/entities/SatuanKerja";
-import { connectDB } from "@/lib/db";
+import { SatuanKerja } from "@/models/SatuanKerja.model";
+import { sequelize } from "@/db/connect";
+import { QueryTypes } from "sequelize";
 import { NextRequest, NextResponse } from "next/server";
+import { DirectionalFinder } from "@/models/directionalFinder.model";
+import { User } from "@/models/user.model";
 
 export async function POST(req: NextRequest) {
     try {
-        const db = await connectDB()
-        const satuanKerja = db.getRepository(SatuanKerja)
+        const satuanKerjas = await SatuanKerja.findAll(); // ambil semua wilayah
 
-        const getSatuanKerja = await satuanKerja.find();
+        const results = [] as Array<{ detail_wilayah: SatuanKerja; perangkat_df: any[] }>;
 
-        const results = [];
+        for (const data of satuanKerjas) {
+            // cari users sesuai wilayah
+            const users = await User.findAll({
+                where: {
+                    satuan_wilayah: data.satuan_wilayah ?? "",
+                    wilayah: data.wilayah ?? "",
+                    nama_satuan: data.nama_satuan ?? "",
+                },
+                include: [
+                    {
+                        model: DirectionalFinder,
+                        where: { status: 2 },
+                        required: false, // biar tetap dapet user meski DF kosong
+                        attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
+                    }
+                ],
+            });
 
-        for await (const data of getSatuanKerja) {
-            const loopingan: any = await satuanKerja.query(`
-                SELECT df.tipe_df, df.teknologi, df.tahun_pengadaan
-                FROM users u
-                LEFT OUTER JOIN directional_finder df ON u.username = df.userCreate
-                WHERE df.status = 2
-                  AND u.satuan_wilayah = '${data.satuan_wilayah}'
-                  AND u.wilayah = '${data.wilayah}'
-                  AND u.nama_satuan = '${data.nama_satuan}'
-            `);
-        
-            if(loopingan.length) {
-                results.push({ "detail_wilayah": data, "perangkat_df": loopingan })
+            // kumpulin semua perangkat_df dari user2 tadi
+            const perangkat_df = users.flatMap((user: any) => user.DirectionalFinders || []);
+
+            if (perangkat_df.length) {
+                results.push({
+                    detail_wilayah: data,
+                    perangkat_df
+                });
             }
         }
-        
 
         return NextResponse.json(results);
-        
+
     } catch (err) {
-        console.log(err)
+        console.error(err);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

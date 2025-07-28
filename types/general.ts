@@ -33,7 +33,7 @@ export type PDFViewerParams = {
 
 export interface PerangkatDF {
     tipe_df: string;
-    teknologi: string;
+    teknologi: string[];
     tahun_pengadaan: string;
 }
 

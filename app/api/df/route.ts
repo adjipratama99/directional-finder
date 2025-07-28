@@ -4,11 +4,12 @@ import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { mkdirSync, existsSync } from 'fs';
 
-import { handlerRequest, RequestType, requiredKey } from '@/lib/handlerRequest';
+import { handlerRequest, RequestType } from '@/db/handler';
 import { message_error, message_success } from '@/lib/messages';
 import { ResponseMessage } from '@/types/general';
 import { authOptions } from '../auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
+import { requiredKey } from '@/lib/utils';
 
 const modelName = 'DirectionalFinder';
 
