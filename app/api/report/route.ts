@@ -26,26 +26,10 @@ export async function POST(req: NextRequest) {
                     }
                 ],
             });
-            console.log("query", JSON.stringify({
-                where: {
-                    satuan_wilayah: data.satuan_wilayah ?? "",
-                    wilayah: data.wilayah ?? "",
-                    nama_satuan: data.nama_satuan ?? "",
-                },
-                include: [
-                    {
-                        model: DirectionalFinder,
-                        where: { status: 2 },
-                        required: false, // biar tetap dapet user meski DF kosong
-                        attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
-                    }
-                ],
-            }))
-
-            console.log("users", users)
 
             // kumpulin semua perangkat_df dari user2 tadi
             const perangkat_df = users.flatMap((user: any) => user.DirectionalFinders || []);
+            console.log("perangkat_df", perangkat_df)
 
             if (perangkat_df.length) {
                 results.push({
