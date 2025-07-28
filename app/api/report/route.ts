@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
                     }
                 ],
             });
-            console.log("query", {
+            console.log("query", JSON.stringify({
                 where: {
                     satuan_wilayah: data.satuan_wilayah ?? "",
                     wilayah: data.wilayah ?? "",
@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
                         attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
                     }
                 ],
-            })
+            }))
+
+            console.log("users", users)
 
             // kumpulin semua perangkat_df dari user2 tadi
             const perangkat_df = users.flatMap((user: any) => user.DirectionalFinders || []);
