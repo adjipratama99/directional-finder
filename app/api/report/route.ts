@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
         const results = [] as Array<{ detail_wilayah: SatuanKerja; perangkat_df: any[] }>;
 
         for (const data of satuanKerjas) {
-            console.log("SatuanKerja", data)
             // cari users sesuai wilayah
             const users = await User.findAll({
                 where: {
@@ -27,6 +26,7 @@ export async function POST(req: NextRequest) {
                     }
                 ],
             });
+            console.log("users", users)
 
             // kumpulin semua perangkat_df dari user2 tadi
             const perangkat_df = users.flatMap((user: any) => user.DirectionalFinders || []);
