@@ -84,7 +84,13 @@ export const authOptions = {
             return session;
         },
         async redirect({ url, baseUrl }) {
-            return url;
+            try {
+                // Kalau url valid dan aman (nggak keluar domain)
+                const valid = url && url.startsWith(baseUrl);
+                return valid ? url : baseUrl;
+              } catch {
+                return baseUrl;
+              }
         }
     },
     pages: {
