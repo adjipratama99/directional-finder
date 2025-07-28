@@ -8,9 +8,7 @@ export default async function middleware(req, event) {
 
     // Redirect authenticated users away from login/code/scan pages
     if (
-        (req.nextUrl.pathname.startsWith('/login') && isAuthenticated) ||
-        (req.nextUrl.pathname.startsWith('/code') && isAuthenticated) ||
-        (req.nextUrl.pathname.startsWith('/scan') && isAuthenticated)
+        (req.nextUrl.pathname.startsWith('/') && isAuthenticated)
     ) {
         return NextResponse.redirect(new URL('/dashboard', req.url))
     }
