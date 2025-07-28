@@ -6,11 +6,16 @@ const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
     if (!config.externals) config.externals = []
 
-    config.externals.push({
-      'react-native-sqlite-storage': 'commonjs react-native-sqlite-storage',
+    config.externals = {
+      ...config.externals,
       '@sap/hana-client': 'commonjs @sap/hana-client',
-      'mysql': 'commonjs mysql',
-    })
+      mysql: 'commonjs mysql',
+      mssql: 'commonjs mssql',
+      oracledb: 'commonjs oracledb',
+      sqlite3: 'commonjs sqlite3',
+      'react-native-sqlite-storage': 'commonjs react-native-sqlite-storage',
+    }
+
 
     config.resolve.fallback = {
       ...config.resolve.fallback,
