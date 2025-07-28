@@ -10,6 +10,7 @@ export async function POST(req: NextRequest) {
         const results = [] as Array<{ detail_wilayah: SatuanKerja; perangkat_df: any[] }>;
 
         for (const data of satuanKerjas) {
+            console.log("SatuanKerja", data)
             // cari users sesuai wilayah
             const users = await User.findAll({
                 where: {
