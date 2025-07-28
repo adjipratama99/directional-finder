@@ -4,11 +4,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   allowedDevOrigins: ['http://192.168.1.57:3000'],
   webpack: (config, { isServer }) => {
-    config.externals = config.externals || []
+    if (!config.externals) config.externals = []
+
     config.externals.push({
       'react-native-sqlite-storage': 'commonjs react-native-sqlite-storage',
       '@sap/hana-client': 'commonjs @sap/hana-client',
+      'mysql': 'commonjs mysql',
     })
+
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
