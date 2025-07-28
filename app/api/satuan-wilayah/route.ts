@@ -14,19 +14,27 @@ export async function POST(req: NextRequest) {
         const type = searchParams.get('type') as RequestType
         const body = await req.json()
 
+        const { usingNamaSatuan } = body;
+
         const { model } = await getTableByModelName(modelName)
+
+        const attributes: any = [];
+
+        if(usingNamaSatuan) {
+            attributes.push([Sequelize.fn('DISTINCT', Sequelize.col('nama_satuan')), 'nama_satuan'])
+        } else {
+            attributes.push([Sequelize.fn('DISTINCT', Sequelize.col('wilayah')), 'wilayah'])
+        }
 
         // 🟣 Jika request hanya butuh unique wilayah
         if (body?.isUnique === true) {
             const uniqueWilayah = await (model as ModelStatic<any>).findAll({
-                attributes: [
-                    [Sequelize.fn('DISTINCT', Sequelize.col('wilayah')), 'wilayah']
-                ],
-                order: [['wilayah', 'ASC']],
+                attributes,
+                order: [[usingNamaSatuan ? "nama_satuan" : 'wilayah', 'ASC']],
                 raw: true
-            });            
+            });
 
-            const results = uniqueWilayah.map(item => item.wilayah)
+            const results = uniqueWilayah.map(item => usingNamaSatuan ? item.nama_satuan : item.wilayah)
 
             return NextResponse.json({
                 ...message_success,

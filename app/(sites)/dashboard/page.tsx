@@ -2,7 +2,7 @@
 
 import TitleSection from "@/components/custom/title-section";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GET_DF_LIST } from "@/constant/app";
+import { GET_DF_LIST, GET_SATUAN_KERJA_LIST } from "@/constant/app";
 import useTableResponse from "@/hooks/useTableResponse";
 import { DFType } from "@/types/general";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
@@ -83,7 +83,7 @@ export default function Dashboard(): React.JSX.Element {
 
     const { data: dataWilayah, isLoading: loadingWilayah } = useCustomQuery({
         url: "/api/satuan-wilayah?type=get",
-        queryKey: [GET_DF_LIST],
+        queryKey: [GET_SATUAN_KERJA_LIST],
         params: { isUnique: true },
         callbackResult(res) {
             if(res?.code === 0) {

@@ -5,41 +5,34 @@ import { User } from "@/models/user.model";
 
 export async function POST(req: NextRequest) {
     try {
-        const satuanKerjas = await SatuanKerja.findAll(); // ambil semua wilayah
+        const params = await req.json();
 
-        const results = [] as Array<{ detail_wilayah: SatuanKerja; perangkat_df: any[] }>;
+        const users = await User.findAll({
+            where: {
+                role: "user",
+                ...(params.nama_satuan && { nama_satuan: params.nama_satuan })
+            },
+            include: [
+                {
+                    model: DirectionalFinder,
+                    where: { status: 2 },
+                    required: false, // biar tetap dapet user meski DF kosong
+                    attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
+                }
+            ],
+        });
 
-        for (const data of satuanKerjas) {
-            // cari users sesuai wilayah
-            const users = await User.findAll({
-                where: {
-                    satuan_wilayah: data.satuan_wilayah ?? "",
-                    wilayah: data.wilayah ?? "",
-                    nama_satuan: data.nama_satuan ?? "",
-                },
-                include: [
-                    {
-                        model: DirectionalFinder,
-                        where: { status: 2 },
-                        required: false, // biar tetap dapet user meski DF kosong
-                        attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
-                    }
-                ],
-            });
+        const results = users.map((user: any) => ({
+            detail_wilayah: {
+                id: user.id,
+                satuan_wilayah: user.satuan_wilayah,
+                wilayah: user.wilayah,
+                nama_satuan: user.nama_satuan
+            },
+            perangkat_df: user.DirectionalFinders || []
+        }));
 
-            // kumpulin semua perangkat_df dari user2 tadi
-            const perangkat_df = users.flatMap((user: any) => user.DirectionalFinders || []);
-            console.log("perangkat_df", perangkat_df)
-
-            if (perangkat_df.length) {
-                results.push({
-                    detail_wilayah: data,
-                    perangkat_df
-                });
-            }
-        }
-
-        return NextResponse.json(results);
+        return NextResponse.json(results ?? []);
 
     } catch (err) {
         console.error(err);

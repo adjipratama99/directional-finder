@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
     Select as SelectUI,
     SelectContent,
@@ -39,6 +39,13 @@ export function Select({
         Array.isArray(value) ? value : []
     )
 
+    // Sync internal state dengan props.value setiap value berubah
+    useEffect(() => {
+        if (isMulti && Array.isArray(value)) {
+            setMultiValue(value)
+        }
+    }, [value, isMulti])
+
     const handleChange = (val: string) => {
         if (isMulti) {
             let newValue: string[]
@@ -78,7 +85,7 @@ export function Select({
             </SelectTrigger>
             <SelectContent className="max-h-[50vh]">
                 <SelectGroup>
-                    {options.map((v) => (
+                    {options.map((v: { text: string, value: string, exist?: boolean }) => (
                         <SelectItem
                             key={v.value}
                             value={v.value}
@@ -90,6 +97,7 @@ export function Select({
                             }}
                             className={cn(
                                 isMulti && multiValue.includes(v.value) && "bg-accent text-accent-foreground",
+                                v.exist && "text-blue-500"
                             )}
                         >
                             <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { ReportData } from "@/types/general";
 import html2canvas from "html2canvas-pro";
@@ -11,21 +11,50 @@ import { formatInTimeZone } from "date-fns-tz";
 
 type Props = {
   data: ReportData[];
+  dataWilayah: { [key: string]: (string|boolean) }[];
+  loadingWilayah: boolean;
+  filter: string;
+  dataSelected: ReportData[];
+  onChangeDataSelected: React.Dispatch<React.SetStateAction<ReportData[]>>;
+  onChangeFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function PDFClient({ data }: Props) {
+export default function PDFClient({ 
+  data, 
+  dataWilayah, 
+  loadingWilayah, 
+  onChangeFilter,
+  dataSelected,
+  onChangeDataSelected
+}: Props) {
   const printRef = useRef<HTMLDivElement>(null);
-  const [selectedData, setSelectedData] = useState<ReportData[]>([]);
   const [options, setOptions] = useState<any>([]);
+  const [selectedOption, setSelectedOption] = useState<string[]>([])
 
   useEffect(() => {
-    setOptions(
-      data.map((d) => ({
+    let existData = data.map((d) => ({
         value: d.detail_wilayah.id,
         text: d.detail_wilayah.nama_satuan,
-      }))
-    );
-  }, []);
+    }))
+    
+    if(existData.length && (dataWilayah && dataWilayah.length)) {
+      let uniqueWilayah = [...new Set(dataWilayah)]
+      let newDataWilayah = uniqueWilayah.map(d => {
+        let newData = {...d};
+        for(let i=0; i < existData.length; i++) {
+          let data = existData[i]
+
+          if(data.text === d.text) {
+            newData['exist'] = true;
+          }
+        }
+
+        return newData;
+      })
+
+      setOptions(newDataWilayah)
+    }
+  }, [data, dataWilayah]);
 
   const downloadPdf = async () => {
     if (!printRef.current) return;
@@ -50,23 +79,14 @@ export default function PDFClient({ data }: Props) {
   };
 
   const handleSatuanWilayah = (val: string) => {
-    let newData = [...selectedData];
-
-    for(let i=0; i<val.length; i++) {
-      const findData = data.find((d) => d.detail_wilayah.id === parseInt(val[i]));
-      
-      if(!newData.find(r => r.detail_wilayah.id === findData?.detail_wilayah.id)) newData.push(findData!)
-    }
-
-    console.log(newData, val)
-
-    if (newData.length) {
-      setSelectedData(newData);
-    }
+    const value = Array.isArray(val) ? val[val.length - 1] : val
+    setSelectedOption(prev => ([...prev, value]))
+    onChangeFilter(value)
   };
 
   const handleClearData = () => {
-    setSelectedData([])
+    onChangeDataSelected([])
+    setSelectedOption([])
   }
 
   return (
@@ -76,19 +96,25 @@ export default function PDFClient({ data }: Props) {
           <FaDownload className="mr-2" />
           Download PDF
         </Button>
-        <Select
-            options={options}
-            isMulti
-            onChange={(val) => handleSatuanWilayah(val as string)}
-            placeholder="Pilih Satuan Wilayah"
-          />
         {
-          selectedData && selectedData.length ? (
+          options && (
+            <Select
+              options={options}
+              isMulti
+              value={selectedOption}
+              disabled={loadingWilayah}
+              onChange={(val) => handleSatuanWilayah(val as string)}
+              placeholder="Pilih Satuan Wilayah"
+            />
+          )
+        }
+        {
+          dataSelected && dataSelected.length ? (
             <Button
               variant="destructive"
               size="sm"
               onClick={handleClearData}
-              disabled={!selectedData.length}
+              disabled={!dataSelected.length}
             >
               <FaTimes className="mr-2" />
               Clear Data
@@ -97,15 +123,15 @@ export default function PDFClient({ data }: Props) {
         }
       </div>
 
-      <div className="flex justify-center">
-        {selectedData && selectedData.length ? (
+      <div className="flex justify-center max-h-full overflow-y-scroll">
+        {dataSelected && dataSelected.length ? (
           <div
             ref={printRef}
             className="bg-white text-black font-sans text-[14px] p-8 w-full max-w-[800px] col-span-2"
           >
             <h1 className="text-xl font-bold text-center mb-6">Laporan DF</h1>
 
-            {selectedData.map((wilayah, idx) => (
+            {dataSelected.map((wilayah, idx) => (
               <div
                 key={idx}
                 className="mb-8 border border-gray-300 rounded-md shadow-sm p-4"
@@ -156,7 +182,7 @@ export default function PDFClient({ data }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-4xl italic text-gray-400">Pilih satuan wilayah terlebih dahulu</div>
+          <div className="italic text-gray-400 text-2xl sm:text-3xl md:text-4xl">Pilih satuan wilayah terlebih dahulu</div>
         )}
       </div>
     </div>
