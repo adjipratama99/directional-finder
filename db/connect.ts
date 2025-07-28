@@ -2,17 +2,12 @@
 import { Sequelize } from 'sequelize';
 
 export const sequelize = new Sequelize(
-    process.env.DB_NAME!,
-    process.env.DB_USER!,
-    process.env.DB_PASS!,
+    process.env.MYSQLDATABASE!,
+    process.env.MYSQLUSER!,
+    process.env.MYSQLPASSWORD!,
     {
-        host: process.env.DB_HOST!,
+        host: process.env.MYSQLHOST!,
         dialectModule: require('mysql2'),
-        dialectOptions: {
-            ssl: {
-                rejectUnauthorized: false,
-            },
-        },
         dialect: 'mysql',
         logging: false,
     }
