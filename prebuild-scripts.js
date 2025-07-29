@@ -1,6 +1,6 @@
-import 'dotenv/config';
-import { promises as fs } from 'fs';
-import path from 'path';
+require('dotenv/config');
+const { promises: fs } = require('fs');
+const path = require('path');
 
 const filePath = path.resolve('./db/prod-ca-2021.crt');
 
