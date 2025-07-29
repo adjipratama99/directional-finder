@@ -11,7 +11,7 @@ export const sequelize = new Sequelize(process.env.POSTGRES_URL, {
     dialectModule: pg,
     dialectOptions: {
         ssl: {
-            rejectUnauthorized: true,
+            rejectUnauthorized: false,
             cert: process.env.CA_CERTIFICATE
         },
     },
