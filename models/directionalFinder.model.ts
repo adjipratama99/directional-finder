@@ -16,7 +16,7 @@ export class DirectionalFinder extends Model<
     declare teknologi: string;
     declare status: number;
     declare keterangan: string | null;
-    declare userCreate: number | null;
+    declare userCreate: string | null;
     declare tahun_pengadaan: string | null;
     declare wilayah: string | null;
     declare dateCreate: Date;
