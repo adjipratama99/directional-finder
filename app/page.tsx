@@ -10,6 +10,8 @@ import { useMemo, useState } from "react";
 import { FaExclamation, FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa'
 import { toast } from "sonner";
 import { signIn } from 'next-auth/react'
+import logo from "@/public/assets/logo_baintelkam.png"
+import Image from "next/image";
 
 export default function Home() {
   const router = useRouter()
@@ -55,7 +57,10 @@ export default function Home() {
     )}>
       <Card className="w-[400px]">
         <CardHeader>
-          <CardTitle className="text-xl">Selamat datang</CardTitle>
+          <CardTitle className="text-xl text-center mb-2">
+            <div className="flex justify-center"><Image src={logo} alt="Baintelkam" className="max-w-[120px] mb-2" /></div>
+            <div>Selamat datang di { process.env.NEXT_PUBLIC_APP_NAME || "Simpada DF" }</div>
+          </CardTitle>
           <CardDescription>Masukkan username dan password dibawah ini untuk login.</CardDescription>
           <CardContent className="px-0">
             <form

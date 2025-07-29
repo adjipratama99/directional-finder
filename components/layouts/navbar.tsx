@@ -149,6 +149,7 @@ export default function Header(): React.JSX.Element {
       }>
         <div className="space-y-1 px-2 pt-2 pb-3">
         {menuList.map((v, i) => (
+          v.role.includes(session?.user?.role ?? "") && (
             <a
             href={v.url}
             aria-current="page"
@@ -160,6 +161,7 @@ export default function Header(): React.JSX.Element {
             >
             {v.label}
             </a>
+          )
         ))}
         </div>
       </div>
