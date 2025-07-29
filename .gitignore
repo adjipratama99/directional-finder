@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+/db/prod-ca-2021.crt
+
 # next.js
 /.next/
 /out/
