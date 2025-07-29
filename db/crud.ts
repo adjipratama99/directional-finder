@@ -6,11 +6,7 @@ export const handleCreate = async (
     body: any
 ) => {
     try {
-        const last = await model.findOne({ order: [['id', 'DESC']] });
-        const newId = (Number(last?.get('id')) || 0) + 1;
-
         const newData = {
-            id: newId,
             ...body,
             status: 1,
             dateCreate: formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss'),

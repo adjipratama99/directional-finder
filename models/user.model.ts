@@ -4,6 +4,7 @@ import {
     InferAttributes,
     InferCreationAttributes,
     CreationOptional,
+    Sequelize,
 } from 'sequelize';
 import { sequelize } from '@/db/connect';
 import { DirectionalFinder } from './directionalFinder.model';
@@ -21,24 +22,24 @@ export class User extends Model<
     declare wilayah: string;
     declare nama_satuan: string;
     declare dateUpdate: Date | null;
-    declare dateCreate: Date;
+    declare dateCreate: CreationOptional<Date>;
 }
 
 User.init(
     {
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             autoIncrement: true,
             primaryKey: true,
         },
         username: {
             type: DataTypes.STRING(255),
             allowNull: false,
+            unique: true,
         },
         password: {
             type: DataTypes.STRING(255),
             allowNull: false,
-            unique: true,
         },
         role: {
             type: DataTypes.STRING(255),
@@ -67,6 +68,7 @@ User.init(
         dateCreate: {
             type: DataTypes.DATE,
             allowNull: false,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         },
     },
     {
@@ -76,5 +78,15 @@ User.init(
     }
 );
 
-User.hasMany(DirectionalFinder, { foreignKey: "userCreate", sourceKey: "username" });
-DirectionalFinder.belongsTo(User, { foreignKey: "userCreate", targetKey: "username" });
+// Relasi
+User.hasMany(DirectionalFinder, {
+    foreignKey: 'userCreate',
+    sourceKey: 'username',
+    as: 'directional_finder',
+});
+
+DirectionalFinder.belongsTo(User, {
+    foreignKey: 'userCreate',
+    targetKey: 'username',
+    as: 'creator',
+});

@@ -91,7 +91,7 @@ export default function PDFClient({
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 px-4">
         <Button onClick={downloadPdf}>
           <FaDownload className="mr-2" />
           Download PDF
@@ -101,6 +101,7 @@ export default function PDFClient({
             <Select
               options={options}
               isMulti
+              searchable
               value={selectedOption}
               disabled={loadingWilayah}
               onChange={(val) => handleSatuanWilayah(val as string)}

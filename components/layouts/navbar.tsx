@@ -2,8 +2,10 @@
 
 import { cn, getInitials } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import logo from '@/public/assets/logo_baintelkam.png'
 
 export default function Header(): React.JSX.Element {
   const { data: session } = useSession();
@@ -31,7 +33,7 @@ export default function Header(): React.JSX.Element {
 
   return (
     <nav className="bg-neutral-800">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-10xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <button
@@ -75,6 +77,12 @@ export default function Header(): React.JSX.Element {
               </svg>
             </button>
           </div>
+          <div className="ml-10 sm:ml-0 max-w-[50px]">
+            <Image
+              src={logo}
+              alt="Baintelkam"
+            />
+          </div>
           <div className="flex flex-1 items-center justify-center">
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
@@ -85,7 +93,7 @@ export default function Header(): React.JSX.Element {
                         aria-current="page"
                         className={cn(
                         "rounded-md px-3 py-2 text-sm font-medium text-white",
-                        pathname === v.url ? "bg-gray-900" : ""
+                        pathname === v.url ? "bg-neutral-600" : ""
                         )}
                         key={v.label}
                     >
@@ -146,7 +154,7 @@ export default function Header(): React.JSX.Element {
             aria-current="page"
             className={cn(
                 "block rounded-md px-3 py-2 text-base font-medium text-white",
-                pathname === v.url ? "bg-gray-900" : ""
+                pathname === v.url ? "bg-neutral-600" : ""
             )}
             key={v.label}
             >

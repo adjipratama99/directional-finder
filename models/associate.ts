@@ -8,4 +8,6 @@ DirectionalFinder.hasMany(UploadedFile, {
 UploadedFile.belongsTo(DirectionalFinder, {
     foreignKey: 'directionalFinderId',
     as: 'directionalFinder',
+    targetKey: 'id',
+    constraints: true
 });

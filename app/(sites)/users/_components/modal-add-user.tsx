@@ -124,6 +124,7 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
                     <Select
                         options={dataWilayah ?? []}
                         disabled={isLoading || !dataWilayah}
+                        searchable
                         placeholder="Pilih Satuan Wilayah"
                         required
                         onChange={(val) => handleChooseNamaSatuan(val as string)}

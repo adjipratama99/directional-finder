@@ -35,19 +35,11 @@ DirectionalFinder.init(
             allowNull: false,
         },
         teknologi: {
-            type: DataTypes.STRING,
+            type: DataTypes.ARRAY(DataTypes.TEXT),
             allowNull: false,
-            get() {
-                const rawValue = this.getDataValue("teknologi") as unknown;
-                return rawValue ? (rawValue as string).split(',') : [];
-            },
-            set(value: string[]) {
-                this.setDataValue("teknologi", value.join(","));
-            }
-
         },
         status: {
-            type: DataTypes.INTEGER(),
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         keterangan: {
@@ -81,3 +73,4 @@ DirectionalFinder.init(
         timestamps: false,
     }
 );
+

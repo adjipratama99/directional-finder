@@ -135,6 +135,7 @@ export default function Dashboard(): React.JSX.Element {
                                     <Select
                                         options={dataWilayah ?? []}
                                         placeholder="Pilih Wilayah"
+                                        searchable
                                         value={filters?.wilayah ? String(filters?.wilayah) : "all"}
                                         disabled={loadingWilayah || !dataWilayah}
                                         onChange={(val) => handleWilayahChange(val as string)}

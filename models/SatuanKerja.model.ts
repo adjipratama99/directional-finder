@@ -25,21 +25,22 @@ SatuanKerja.init(
             primaryKey: true,
         },
         wilayah: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         satuan_wilayah: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         nama_satuan: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.STRING,
             allowNull: true,
         },
     },
     {
         sequelize,
         tableName: 'satuan_kerja',
+        modelName: 'SatuanKerja',
         timestamps: false,
     }
 );

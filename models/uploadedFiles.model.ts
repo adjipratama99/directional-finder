@@ -23,8 +23,8 @@ UploadedFile.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
+            autoIncrement: true,
         },
         file_name: {
             type: DataTypes.STRING(255),
@@ -39,10 +39,11 @@ UploadedFile.init(
             type: DataTypes.INTEGER,
             allowNull: true,
             references: {
-                model: DirectionalFinder,
+                model: 'directional_finder',
                 key: 'id',
             },
             onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
         },
     },
     {

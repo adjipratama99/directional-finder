@@ -47,13 +47,13 @@ export const buildQuery = async ({
           const [relation, relField] = field.split(".");
           include.push({
             association: relation as any,
-            where: { [relField]: { [Op.like]: `%${search}%` } },
+            where: { [relField]: { [Op.iLike]: `%${search}%` } },
             required: false,
           });
           return;
         }
 
-        return { [field]: { [Op.like]: `%${search}%` } };
+        return { [field]: { [Op.iLike]: `%${search}%` } };
       }).filter(Boolean);
     }
   }
@@ -66,7 +66,7 @@ export const buildQuery = async ({
     if (key === "status" && value) {
       where[key] = Array.isArray(value) ? { [Op.in]: value } : value;
     } else if (typeof value === "string") {
-      where[key] = { [Op.like]: `%${value}%` };
+      where[key] = { [Op.iLike]: `%${value}%` };
     } else {
       where[key] = value;
     }

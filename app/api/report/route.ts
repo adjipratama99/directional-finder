@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
             include: [
                 {
                     model: DirectionalFinder,
-                    // where: { status: 2 },
-                    required: true,
+                    as: "directional_finder",
+                    where: { status: 2 },
+                    required: false,
                     attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
                 }
             ],
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
                 wilayah: user.wilayah,
                 nama_satuan: user.nama_satuan
             },
-            perangkat_df: user.DirectionalFinders || []
+            perangkat_df: user.directional_finder || []
         }));
 
         return NextResponse.json(results ?? []);
