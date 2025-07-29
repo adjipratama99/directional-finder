@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
                 {
                     model: DirectionalFinder,
                     // where: { status: 2 },
-                    required: false,
+                    required: true,
                     attributes: ["tipe_df", "teknologi", "tahun_pengadaan"],
                 }
             ],
