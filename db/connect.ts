@@ -19,7 +19,7 @@ export const sequelize = new Sequelize(process.env.POSTGRES_URL_NON_POOLING, {
     dialectOptions: {
         ssl: {
             rejectUnauthorized: true,
-            cert
+            cert: process.env.CA_CERTIFICATE
         },
     },
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
