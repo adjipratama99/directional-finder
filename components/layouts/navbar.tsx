@@ -83,7 +83,7 @@ export default function Sidebar(): React.JSX.Element {
                     <div className="mt-auto border-t border-neutral-600 pt-4">
                         <div className="flex items-center justify-between px-4">
                             <div className="flex items-center gap-2">
-                                <div className="bg-neutral-500 text-white rounded-full px-3 py-1 text-sm font-bold">
+                                <div className="bg-neutral-500 text-white rounded-full px-3 py-1.5 text-sm font-bold">
                                     {getInitials(session?.user?.username ?? "")}
                                 </div>
                                 <span className="text-sm">

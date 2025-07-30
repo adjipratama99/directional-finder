@@ -144,14 +144,18 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
                 </div>
                 <div className="flex flex-col gap-2 col-span-2">
                     <Label isRequired value="Satuan Kerja" />
-                    <Select
-                        groupedOptions={data}
-                        isModal
-                        disabled={isLoading}
-                        onChange={(val) => setParams(prev => ({...prev, satuan_kerja: val as string}))}
-                        placeholder="Pilih Satuan Kerja"
-                        value={params.satuan_kerja}
-                    />
+                    {
+                        data && (
+                            <Select
+                                groupedOptions={data}
+                                isModal
+                                disabled={isLoading}
+                                onChange={(val) => setParams(prev => ({...prev, satuan_kerja: val as string}))}
+                                placeholder="Pilih Satuan Kerja"
+                                value={params.satuan_kerja}
+                            />
+                        )
+                    }
                 </div>
                 <div className="flex flex-col gap-2 col-span-2">
                     <Label value="Keterangan" />
