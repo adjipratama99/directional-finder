@@ -17,8 +17,8 @@ export default function Sidebar(): React.JSX.Element {
     const pathname = usePathname();
 
     const menuList = [
-        { label: "Permintaan", url: "/dashboard", role: ["admin", "user"] },
         { label: "Inventaris", url: "/inventory", role: ["admin"] },
+        { label: "Permintaan", url: "/dashboard", role: ["admin", "user"] },
         { label: "Pengguna", url: "/users", role: ["admin"] },
         { label: "Laporan", url: "/report", role: ["admin"] },
     ];
