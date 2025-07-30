@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 🟢 Ambil data sesuai type
-        const desiredKey: string[] = (type === "get") ? ["id", "wilayah", "nama_satuan"] : []
+        const desiredKey: string[] = (type === "get") ? ["id", "wilayah", "satuan_wilayah", "nama_satuan"] : []
 
         const data = await handlerRequest({
             body,

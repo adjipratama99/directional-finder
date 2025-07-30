@@ -1,50 +1,55 @@
-import { useEffect, useMemo, useState } from "react"
-import {
-    Select as SelectUI,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import * as React from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+} from "@/components/ui/command"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
 
-type Option = {
+export type Option = {
     value: string
     text: string
     exist?: boolean
 }
 
-type SelectProps = {
-    options: Option[]
+type ComboBoxProps = {
+    options?: Option[]
     placeholder?: string
+    isModal?: boolean
     className?: string
     fullWidth?: boolean
+    groupedOptions?: Record<string, Option[]>
     isMulti?: boolean
     value?: string | string[]
-    searchable?: boolean
     onChange: (val: string | string[]) => void
-} & Omit<React.ComponentProps<typeof SelectUI>, "value" | "onValueChange">
+    disabled?: boolean
+}
 
 export function Select({
-    options,
-    placeholder,
+    options = [],
+    groupedOptions,
+    placeholder = "Select",
     className,
     fullWidth,
     isMulti = false,
-    searchable = false,
     value,
     onChange,
-    ...props
-}: SelectProps) {
-    const [multiValue, setMultiValue] = useState<string[]>(
-        Array.isArray(value) ? value : []
-    )
+    isModal = false,
+    disabled = false,
+}: ComboBoxProps) {
+    const [open, setOpen] = React.useState(false)
+    const [multiValue, setMultiValue] = React.useState<string[]>(Array.isArray(value) ? value : [])
 
-    const [search, setSearch] = useState("")
-
-    useEffect(() => {
+    React.useEffect(() => {
         if (isMulti && Array.isArray(value)) {
             setMultiValue(value)
         }
@@ -61,87 +66,132 @@ export function Select({
             setMultiValue(newValue)
             onChange(newValue)
         } else {
-            onChange(val)
+            if (value === val) {
+                onChange("") // unselect
+            } else {
+                onChange(val)
+                setOpen(false)
+            }
         }
     }
 
-    const filteredOptions = useMemo(() => {
-        return options.filter((o) =>
-            o.text.toLowerCase().includes(search.toLowerCase())
-        )
-    }, [search, options])
+    const displayText = React.useMemo(() => {
+        // Bikin semua options jadi satu array flat
+        const flatOptions: Option[] = (Array.isArray(options) && options.length)
+            ? options
+            : Object.values((groupedOptions as Record<string, Option[]>) ?? {}).flat() as Option[];
+    
+        if (isMulti) {
+            if (multiValue.length === 0) return placeholder;
+    
+            return multiValue
+                .map((val) => flatOptions.find((o) => o.value === val)?.text || val)
+                .join(", ");
+        } else {
+            const selected = flatOptions.find((o) => o.value === value);
+            return selected?.text || placeholder;
+        }
+    }, [multiValue, value, options, isMulti, placeholder]);
+    
 
     return (
-        <SelectUI
-            {...props}
-            value={isMulti ? undefined : (value as string)}
-            onValueChange={handleChange}
-        >
-            <SelectTrigger className={cn(fullWidth ? "w-full" : "w-auto", className)}>
-                <SelectValue
-                    placeholder={placeholder}
-                    {...(isMulti && {
-                        children:
-                            multiValue.length > 0
-                                ? multiValue
-                                      .map((val) => {
-                                          const found = options.find((o) => o.value === val)
-                                          return found?.text || val
-                                      })
-                                      .join(", ")
-                                : placeholder,
-                    })}
-                />
-            </SelectTrigger>
-            <SelectContent className="max-h-[60vh]">
-                {searchable && (
-                    <div className="px-3 py-2">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="w-full px-3 py-1 text-sm border rounded-md outline-none focus:ring-2 focus:ring-ring"
-                        />
-                    </div>
-                )}
-                <SelectGroup>
-                    {filteredOptions.length > 0 ? (
-                        filteredOptions.map((v) => (
-                            <SelectItem
-                                key={v.value}
-                                value={v.value}
-                                onClick={(e) => {
-                                    if (isMulti) {
-                                        e.preventDefault()
-                                        handleChange(v.value)
-                                    }
-                                }}
-                                className={cn(
-                                    isMulti && multiValue.includes(v.value) && "bg-accent text-accent-foreground",
-                                    v.exist && "text-blue-500"
-                                )}
-                            >
-                                <div className="flex items-center gap-2">
-                                    {isMulti && (
-                                        <input
-                                            type="checkbox"
-                                            checked={multiValue.includes(v.value)}
-                                            readOnly
-                                            className="pointer-events-none"
-                                        />
-                                    )}
-                                    {v.text}
-                                </div>
-                            </SelectItem>
-                        ))
-                    ) : (
-                        <div className="px-3 py-2 text-sm text-muted-foreground">
-                            No results found.
-                        </div>
+        <Popover open={open} onOpenChange={!disabled ? setOpen : () => {}} modal={isModal}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    disabled={disabled}
+                    className={cn(
+                        "justify-between max-w-auto",
+                        fullWidth && "w-full",
+                        className
                     )}
-                </SelectGroup>
-            </SelectContent>
-        </SelectUI>
+                >
+                    <span
+                        className={cn(
+                            (isMulti ? multiValue.length === 0 : !value) && "text-muted-foreground",
+                            disabled && "opacity-50"
+                        )}
+                    >
+                        {displayText}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0 max-h-[300px] overflow-auto">
+                <Command>
+                    <CommandInput placeholder="Search..." disabled={disabled} />
+                    <CommandEmpty>No results found.</CommandEmpty>
+                        {
+                        options.length ?
+                        <CommandGroup>
+                            { options.map((option) => {
+                                const isSelected = isMulti
+                                    ? multiValue.includes(option.value)
+                                    : value === option.value
+                                return (
+                                    <CommandItem
+                                        key={option.value}
+                                        disabled={disabled}
+                                        onSelect={() => handleChange(option.value)}
+                                        className={cn(option.exist && "text-blue-500")}
+                                    >
+                                        <div className="flex items-center gap-2 w-full">
+                                            {isMulti && (
+                                                <input
+                                                    type="checkbox"
+                                                    readOnly
+                                                    checked={isSelected}
+                                                    className="pointer-events-none"
+                                                />
+                                            )}
+                                            <span className="flex-1">{option.text}</span>
+                                            {isSelected && !isMulti && (
+                                                <Check className="ml-auto h-4 w-4" />
+                                            )}
+                                        </div>
+                                    </CommandItem>
+                                )
+                            }) }
+                        </CommandGroup>
+                        :
+                        groupedOptions &&
+                            Object.entries(groupedOptions).map(([groupName, groupOptions]) => (
+                                <CommandGroup key={groupName} heading={groupName}>
+                                    {groupOptions.map((option) => {
+                                        const isSelected = isMulti
+                                            ? multiValue.includes(option.value)
+                                            : value === option.value
+                                        return (
+                                            <CommandItem
+                                                key={option.value}
+                                                disabled={disabled}
+                                                onSelect={() => handleChange(option.value)}
+                                                className={cn(option.exist && "text-blue-500")}
+                                            >
+                                                <div className="flex items-center gap-2 w-full">
+                                                    {isMulti && (
+                                                        <input
+                                                            type="checkbox"
+                                                            readOnly
+                                                            checked={isSelected}
+                                                            className="pointer-events-none"
+                                                        />
+                                                    )}
+                                                    <span className="flex-1">{option.text}</span>
+                                                    {isSelected && !isMulti && (
+                                                        <Check className="ml-auto h-4 w-4" />
+                                                    )}
+                                                </div>
+                                            </CommandItem>
+                                        )
+                                    })}
+                                </CommandGroup>
+                            ))
+                    }
+                </Command>
+            </PopoverContent>
+        </Popover>
     )
 }

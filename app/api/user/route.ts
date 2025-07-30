@@ -35,7 +35,10 @@ export async function POST(req: NextRequest) {
             delete body.oldPassword;
         }
 
-        const request = await handlerRequest({ body, type, modelName, ...(desiredKey.length && { desiredKey }) })
+        const request = await handlerRequest({ body: {
+            ...body,
+            ...(type === "get" && { filters: {...body?.filters, status: [0, 1]} })
+        }, type, modelName, ...(desiredKey.length && { desiredKey }) })
         let response: ResponseMessage<any> = request ? {...message_success} : {...message_error, message: "Gagal update data."};
         response.content = request;
         return NextResponse.json(response)

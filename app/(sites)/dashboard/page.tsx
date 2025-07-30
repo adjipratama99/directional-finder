@@ -3,8 +3,6 @@
 import TitleSection from "@/components/custom/title-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GET_DF_LIST, GET_SATUAN_KERJA_LIST } from "@/constant/app";
-import useTableResponse from "@/hooks/useTableResponse";
-import { DFType } from "@/types/general";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import CardDF from "./_components/card-df";
 import { Input } from "@/components/ui/input";
@@ -102,8 +100,8 @@ export default function Dashboard(): React.JSX.Element {
         <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4 w-[600px]">
-                    <TitleSection title="Request DF" />
-                    <div className="w-full max-w-xs sm:max-w-[350px]">
+                    <TitleSection title="Permintaan" />
+                    <div className="w-full max-w-xs sm:max-w-[450px]">
                         <div className="flex items-center gap-4">
                             <Input
                                 type="text"
@@ -135,7 +133,6 @@ export default function Dashboard(): React.JSX.Element {
                                     <Select
                                         options={dataWilayah ?? []}
                                         placeholder="Pilih Wilayah"
-                                        searchable
                                         value={filters?.wilayah ? String(filters?.wilayah) : "all"}
                                         disabled={loadingWilayah || !dataWilayah}
                                         onChange={(val) => handleWilayahChange(val as string)}
@@ -158,7 +155,7 @@ export default function Dashboard(): React.JSX.Element {
                 }
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 gap-8 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
                     {data && data?.pages && (
                         data.pages.map((page, index) => (
                             <Fragment key={page.nextId}>

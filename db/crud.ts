@@ -1,5 +1,6 @@
 import { Model, ModelStatic } from 'sequelize';
 import { formatInTimeZone } from 'date-fns-tz';
+import { ConfigType } from './handler';
 
 export const handleCreate = async (
     model: ModelStatic<Model<any, any>>,
@@ -8,9 +9,6 @@ export const handleCreate = async (
     try {
         const newData = {
             ...body,
-            status: 1,
-            dateCreate: formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss'),
-            dateUpdate: null,
         };
 
         const result = await model.create(newData);
@@ -23,20 +21,22 @@ export const handleCreate = async (
 
 export const handleUpdate = async (
     model: ModelStatic<Model<any, any>>,
-    body: any
+    body: any,
+    config: ConfigType,
 ) => {
     try {
-        const [affectedRows] = await model.update(
+        const [affectedRows, updatedRows] = await model.update(
             {
                 ...body,
                 dateUpdate: formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss'),
             },
             {
-                where: { id: body.id }
+                where: { [config?.findByKey ?? "id"]: body[config?.findByKey ?? "id"] },
+                returning: config.includeData ?? false
             }
-        );
+        ) as [number, any[]?];
 
-        return affectedRows > 0;
+        return config.includeData ? { affectedRows, updatedRows } : affectedRows > 0;
     } catch (err) {
         console.error('Update error:', err);
         return false;

@@ -17,9 +17,10 @@ export default function Sidebar(): React.JSX.Element {
     const pathname = usePathname();
 
     const menuList = [
-        { label: "Request DF", url: "/dashboard", role: ["admin", "user"] },
-        { label: "Users", url: "/users", role: ["admin"] },
-        { label: "Report", url: "/report", role: ["admin"] },
+        { label: "Permintaan", url: "/dashboard", role: ["admin", "user"] },
+        { label: "Inventaris", url: "/inventory", role: ["admin"] },
+        { label: "Pengguna", url: "/users", role: ["admin"] },
+        { label: "Laporan", url: "/report", role: ["admin"] },
     ];
 
     return (
@@ -96,7 +97,7 @@ export default function Sidebar(): React.JSX.Element {
                                 onClick={() => signOut()}
                                 className="flex items-center gap-2 text-red-400 hover:text-red-300"
                             >
-                                <FaSignOutAlt /> Logout
+                                <FaSignOutAlt /> Keluar
                             </button>
                         </div>
                     </div>

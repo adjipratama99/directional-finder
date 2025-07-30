@@ -5,13 +5,14 @@ import { Model, ModelStatic } from "sequelize";
 
 export type RequestType = "create" | "update" | "delete" | "get" | "read";
 
-type ConfigType = {
+export type ConfigType = {
     body: Record<string, any>;
     type: RequestType;
     modelName: string;
     findByKey?: string;
     desiredKey?: string[];
     searchKey?: string[];
+    includeData?: boolean;
 };
 
 type HandlerFunction = (
@@ -22,7 +23,7 @@ type HandlerFunction = (
 
 const handlers: Record<RequestType, HandlerFunction> = {
     create: (model, body) => handleCreate(model, body),
-    update: (model, body) => handleUpdate(model, body),
+    update: (model, body, config) => handleUpdate(model, body, config!),
     delete: (model, body) => handleDelete(model, body),
     get: (model, body, config) =>
         buildQuery({

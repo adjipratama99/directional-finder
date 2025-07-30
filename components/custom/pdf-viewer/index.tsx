@@ -11,7 +11,7 @@ import { formatInTimeZone } from "date-fns-tz";
 
 type Props = {
   data: ReportData[];
-  dataWilayah: { [key: string]: (string|boolean) }[];
+  dataWilayah: { [key: string]: string | boolean }[];
   loadingWilayah: boolean;
   filter: string;
   dataSelected: ReportData[];
@@ -19,40 +19,40 @@ type Props = {
   onChangeFilter: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function PDFClient({ 
-  data, 
-  dataWilayah, 
-  loadingWilayah, 
+export default function PDFClient({
+  data,
+  dataWilayah,
+  loadingWilayah,
   onChangeFilter,
   dataSelected,
-  onChangeDataSelected
+  onChangeDataSelected,
 }: Props) {
   const printRef = useRef<HTMLDivElement>(null);
   const [options, setOptions] = useState<any>([]);
-  const [selectedOption, setSelectedOption] = useState<string[]>([])
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
 
   useEffect(() => {
     let existData = data.map((d) => ({
-        value: d.detail_wilayah.id,
-        text: d.detail_wilayah.nama_satuan,
-    }))
-    
-    if(existData.length && (dataWilayah && dataWilayah.length)) {
-      let uniqueWilayah = [...new Set(dataWilayah)]
-      let newDataWilayah = uniqueWilayah.map(d => {
-        let newData = {...d};
-        for(let i=0; i < existData.length; i++) {
-          let data = existData[i]
+      value: d.detail_wilayah.id,
+      text: d.detail_wilayah.nama_satuan,
+    }));
 
-          if(data.text === d.text) {
-            newData['exist'] = true;
+    if (existData.length && dataWilayah && dataWilayah.length) {
+      let uniqueWilayah = [...new Set(dataWilayah)];
+      let newDataWilayah = uniqueWilayah.map((d) => {
+        let newData = { ...d };
+        for (let i = 0; i < existData.length; i++) {
+          let data = existData[i];
+
+          if (data.text === d.text) {
+            newData["exist"] = true;
           }
         }
 
         return newData;
-      })
+      });
 
-      setOptions(newDataWilayah)
+      setOptions(newDataWilayah);
     }
   }, [data, dataWilayah]);
 
@@ -75,19 +75,31 @@ export default function PDFClient({
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${ formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss') }-DF-Report.pdf`);
+    pdf.save(
+      `${formatInTimeZone(
+        new Date(),
+        "UTC",
+        "yyyy-MM-dd HH:mm:ss"
+      )}-DF-Report.pdf`
+    );
   };
 
-  const handleSatuanWilayah = (val: string) => {
-    const value = Array.isArray(val) ? val[val.length - 1] : val
-    setSelectedOption(prev => ([...prev, value]))
-    onChangeFilter(value)
+  const handleSatuanWilayah = (val: string[]) => {
+    let value: string = (Array.isArray(val)) ? val[val.length - 1] : val;
+
+    setSelectedOption(val);
+    
+    if(value) {
+      onChangeFilter(value);
+    } else {
+      onChangeDataSelected([]);
+    }
   };
 
   const handleClearData = () => {
-    onChangeDataSelected([])
-    setSelectedOption([])
-  }
+    onChangeDataSelected([]);
+    setSelectedOption([]);
+  };
 
   return (
     <div className="w-full">
@@ -96,32 +108,29 @@ export default function PDFClient({
           <FaDownload className="mr-2" />
           Download PDF
         </Button>
-        {
-          options && (
-            <Select
-              options={options}
-              isMulti
-              searchable
-              value={selectedOption}
-              disabled={loadingWilayah}
-              onChange={(val) => handleSatuanWilayah(val as string)}
-              placeholder="Pilih Satuan Wilayah"
-            />
-          )
-        }
-        {
-          dataSelected && dataSelected.length ? (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleClearData}
-              disabled={!dataSelected.length}
-            >
-              <FaTimes className="mr-2" />
-              Clear Data
-            </Button>
-          ) : ""
-        }
+        {options && (
+          <Select
+            options={options}
+            isMulti
+            value={selectedOption}
+            disabled={loadingWilayah}
+            onChange={(val) => handleSatuanWilayah(val as string[])}
+            placeholder="Pilih Satuan Wilayah"
+          />
+        )}
+        {dataSelected && dataSelected.length ? (
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleClearData}
+            disabled={!dataSelected.length}
+          >
+            <FaTimes className="mr-2" />
+            Clear Data
+          </Button>
+        ) : (
+          ""
+        )}
       </div>
 
       <div className="flex justify-center max-h-full overflow-y-scroll mt-4">
@@ -183,7 +192,9 @@ export default function PDFClient({
             ))}
           </div>
         ) : (
-          <div className="italic text-gray-400 text-2xl sm:text-3xl md:text-4xl">Pilih satuan wilayah terlebih dahulu</div>
+          <div className="italic text-gray-400 text-2xl sm:text-3xl md:text-4xl">
+            Pilih satuan wilayah terlebih dahulu
+          </div>
         )}
       </div>
     </div>

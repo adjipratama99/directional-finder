@@ -10,9 +10,9 @@ export default function ReactQueryClientProvider({ children }) {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
-                refetchOnMount: false,
-                refetchOnReconnect: false,
-                refetchOnWindowFocus: false,
+                refetchOnMount: true,
+                refetchOnReconnect: true,
+                refetchOnWindowFocus: true,
                 retry: 1,
                 staleTime: 1000 * 60 * 5,
             }

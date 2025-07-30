@@ -23,7 +23,7 @@ export default function CardDF({ data }: { data: DFType }): React.JSX.Element {
     <Modal
       open={isOpen}
       onOpenChange={setOpen}
-      title={`Rincian ${data.tipe_df} by ${data.uploaded_files[0].uploaded_by}`}
+      title={`Rincian ${data.tipe_df} oleh ${data.uploaded_files[0].uploaded_by}`}
       trigger={
         <Card
           className={cn(
@@ -33,7 +33,7 @@ export default function CardDF({ data }: { data: DFType }): React.JSX.Element {
         >
           <CardHeader className="flex justify-between items-center">
             <CardTitle className="capitalize">
-              {data.tipe_df} by {data.uploaded_files[0].uploaded_by}
+              {data.tipe_df} oleh {data.uploaded_files[0].uploaded_by}
             </CardTitle>
             <div className="flex items-center flex-col gap-2">
               {

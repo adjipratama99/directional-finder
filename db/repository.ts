@@ -4,12 +4,14 @@ import { DirectionalFinder } from '@/models/directionalFinder.model';
 import { UploadedFile } from '@/models/uploadedFiles.model';
 import { SatuanKerja } from '@/models/SatuanKerja.model';
 import { User } from '@/models/user.model';
+import { Inventory } from '@/models/inventory.model';
 
 const modelsMap = {
     DirectionalFinder,
     UploadedFile,
     SatuanKerja,
     User,
+    Inventory
 } as const;
 
 type ModelName = keyof typeof modelsMap;

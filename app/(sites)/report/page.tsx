@@ -1,6 +1,6 @@
 "use client"
 
-import { GET_REPORT_LIST, GET_SATUAN_KERJA_LIST } from "@/constant/app";
+import { GET_NAMA_SATUAN_LIST, GET_REPORT_LIST, GET_SATUAN_KERJA_LIST } from "@/constant/app";
 import LoadingScreen from "@/hooks/LoadingScreen";
 import { useCustomQuery } from "@/hooks/useQueryData";
 import { fetchPost } from "@/lib/Fetcher";
@@ -20,7 +20,7 @@ export default function ReportPage() {
 
     const { data: dataWilayah, isLoading: loadingWilayah } = useCustomQuery({
         url: "/api/satuan-wilayah?type=get",
-        queryKey: [GET_SATUAN_KERJA_LIST],
+        queryKey: [GET_NAMA_SATUAN_LIST],
         params: { isUnique: true, usingNamaSatuan: true },
         callbackResult(res) {
             if(res?.code === 0) {

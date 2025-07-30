@@ -19,9 +19,9 @@ export default function ChangePassword(): React.JSX.Element {
         <Modal
             open={open}
             onOpenChange={setOpen}
-            title="Change Password"
+            title="Ganti Password"
             trigger={
-                <Link href="#" className="flex items-center gap-2"><FaAsterisk /> Change Password</Link>
+                <Link href="#" className="flex items-center gap-2"><FaAsterisk /> Ganti Kata Sandi</Link>
             }
             content={<ContentChangePassword onClose={setOpen} />}
         />

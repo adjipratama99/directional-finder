@@ -114,7 +114,6 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
                             value: "POLRES",
                             text: "Polres"
                         }]}
-                        required
                         placeholder="Pilih Satuan Wilayah"
                         onChange={(val) => setParams(prev => ({...prev, satuan_wilayah: val as string}))}
                     />
@@ -124,9 +123,7 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
                     <Select
                         options={dataWilayah ?? []}
                         disabled={isLoading || !dataWilayah}
-                        searchable
                         placeholder="Pilih Satuan Wilayah"
-                        required
                         onChange={(val) => handleChooseNamaSatuan(val as string)}
                     />
                 </div>

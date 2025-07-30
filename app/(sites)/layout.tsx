@@ -53,7 +53,7 @@ export default function SiteLayout({ children }) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer">
-                  <FaSignOutAlt />Log out
+                  <FaSignOutAlt />Keluar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
