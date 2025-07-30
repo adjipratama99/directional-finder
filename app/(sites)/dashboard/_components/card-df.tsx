@@ -163,7 +163,6 @@ function ContentModalDF({ data, onClose }: { data: DFType; onClose: React.Dispat
                       value: "3",
                       text: "Ditolak"
                     }]}
-                    required
                     onChange={(val) => setStatus(val as string)}
                     placeholder="Pilih status"
                   />
