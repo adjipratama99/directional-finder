@@ -56,7 +56,7 @@ export default function ReportPage() {
     })
 
     return (
-        <div className="bg-gray-50 h-full py-6">
+        <div className="bg-gray-50 h-[92vh] py-6">
             {
                 (data || !isLoading) ?
                     (<PDFClient

@@ -124,7 +124,7 @@ export default function PDFClient({
         }
       </div>
 
-      <div className="flex justify-center max-h-full overflow-y-scroll">
+      <div className="flex justify-center max-h-full overflow-y-scroll mt-4">
         {dataSelected && dataSelected.length ? (
           <div
             ref={printRef}
