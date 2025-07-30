@@ -35,15 +35,15 @@ export default function CardDF({ data }: { data: DFType }): React.JSX.Element {
             <CardTitle className="capitalize">
               {data.tipe_df} by {data.uploaded_files[0].uploaded_by}
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-col gap-2">
+              {
+                data?.tahun_pengadaan && (
+                  <div className="text-sm">(TP: { data?.tahun_pengadaan })</div>
+                )
+              }
               <Badge variant={data.status === 1 ? "default" : data.status === 2 ? "success" : "destructive"}>
                 {data.status === 1 ? "Diminta" : data.status === 2 ? "Disetujui" : "Ditolak"}
               </Badge>
-              {
-                data?.tahun_pengadaan && (
-                  <div>(TP: { data?.tahun_pengadaan })</div>
-                )
-              }
             </div>
           </CardHeader>
           <CardContent>

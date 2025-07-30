@@ -33,7 +33,7 @@ const handlers: Record<RequestType, HandlerFunction> = {
             searchKey: config?.searchKey,
         }),
     read: async (model, body, config) => {
-        const findByKey = config?.findByKey;
+        const findByKey = config?.findByKey ? config?.findByKey : "id";
         if (!findByKey) throw new Error("Missing `findByKey` in argument for read");
 
         return model.findOne({

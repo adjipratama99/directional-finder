@@ -32,7 +32,7 @@ export const handleUpdate = async (
                 dateUpdate: formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss'),
             },
             {
-                where: { id: body.id },
+                where: { id: body.id }
             }
         );
 

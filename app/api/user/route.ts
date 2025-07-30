@@ -21,8 +21,22 @@ export async function POST(req: NextRequest) {
             desiredKey = ["id", "username", "status", "dateCreate", "dateUpdate", "satuan_wilayah", "wilayah", "nama_satuan"];
         }
 
+        if(type === "update" && body.hasOwnProperty("oldPassword") && body.oldPassword) {
+            const user = await handlerRequest({ body, type: "read", modelName, ...(desiredKey.length && { desiredKey }) });
+            
+            if(user) {
+                if(user.password !== body.oldPassword) {
+                    return NextResponse.json({ ...message_error, message: "Password lama tidak sama dengan yang ada di data." })
+                }
+            } else {
+                return NextResponse.json({ ...message_error, message: "User tidak ditemukan." })
+            }
+
+            delete body.oldPassword;
+        }
+
         const request = await handlerRequest({ body, type, modelName, ...(desiredKey.length && { desiredKey }) })
-        let response: ResponseMessage<any> = {...message_success};
+        let response: ResponseMessage<any> = request ? {...message_success} : {...message_error, message: "Gagal update data."};
         response.content = request;
         return NextResponse.json(response)
     } catch (err) {
@@ -41,6 +55,9 @@ async function requiredKeyByType(type: RequestType): Promise<string[]> {
             break;
         case "get":
             required = ["offset", "limit"];
+            break;
+        case "update":
+            required = ["id"];
             break;
         default:
     }
