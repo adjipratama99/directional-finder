@@ -52,13 +52,6 @@ export const columnsUser: ColumnDef<Inventory>[] = [
         cell: (prop) => <div className="text-wrap max-w-[200px]">{ prop.getValue() as string }</div>
     },
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: (prop) => {
-            return parseInt(prop.getValue() as string) === 1 ? <Badge>Active</Badge> : <Badge variant="destructive">Inactive</Badge>
-        }
-    },
-    {
         accessorKey: "id",
         header: "Action",
         cell: (prop) => {
