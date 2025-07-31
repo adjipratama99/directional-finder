@@ -145,7 +145,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Label isRequired value="Satuan Kerja" />
+                    <Label isRequired value="Kondisi Barang" />
                     <Select
                         options={[{
                             value: "Berfungsi Baik (Optimal)",
