@@ -14,6 +14,7 @@ type ParamsType = {
     nama: string;
     tahun_pengadaan: string;
     tipe_df: string;
+    kondisi_perangkat: string;
     satuan_kerja: string;
     teknologi: string[];
     keterangan?: string;
@@ -58,6 +59,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
         tahun_pengadaan: "",
         tipe_df: "",
         teknologi: [],
+        kondisi_perangkat: "",
         satuan_kerja: ""
     })
     
@@ -142,7 +144,30 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
                         onChange={(val) => setParams(prev => ({...prev, teknologi: val as string[]}))}
                     />
                 </div>
-                <div className="flex flex-col gap-2 col-span-2">
+                <div className="flex flex-col gap-2">
+                    <Label isRequired value="Satuan Kerja" />
+                    <Select
+                        options={[{
+                            value: "Berfungsi Baik (Optimal)",
+                            text: "Berfungsi Baik (Optimal)"
+                        },{
+                            value: "Berfungsi Sebagian",
+                            text: "Berfungsi Sebagian"
+                        },{
+                            value: "Rusak Ringan",
+                            text: "Rusak Ringan"
+                        },{
+                            value: "Rusak Berat",
+                            text: "Rusak Berat"
+                        }]}
+                        isModal
+                        disabled={isLoading}
+                        onChange={(val) => setParams(prev => ({...prev, kondisi_perangkat: val as string}))}
+                        placeholder="Pilih Kondisi Barang"
+                        value={params.kondisi_perangkat}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
                     <Label isRequired value="Satuan Kerja" />
                     {
                         data && (
