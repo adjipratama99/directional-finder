@@ -39,6 +39,7 @@ export default function ModalRequestDF({ onClose }: { onClose: React.Dispatch<Re
         formData.append("keterangan", params.keterangan!)
         formData.append("teknologi", params.teknologi.join(","))
         formData.append("wilayah", session?.user.wilayah!)
+        formData.append("nama_satuan", session?.user.nama_satuan!)
         files.forEach(file => formData.append("uploaded_files", file))
 
         const request = await fetchPost({
@@ -102,6 +103,7 @@ export default function ModalRequestDF({ onClose }: { onClose: React.Dispatch<Re
                         }]}
                         placeholder="Pilih tipe DF"
                         onChange={(val) => setParams(prev => ({...prev, tipe_df: val as string}))}
+                        value={params.tipe_df}
                     />
                 </div>
                 <div className="flex flex-col gap-2">

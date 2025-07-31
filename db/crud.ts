@@ -1,17 +1,30 @@
 import { Model, ModelStatic } from 'sequelize';
 import { formatInTimeZone } from 'date-fns-tz';
 import { ConfigType } from './handler';
+import { UploadedFile } from '@/models/uploadedFiles.model';
 
 export const handleCreate = async (
     model: ModelStatic<Model<any, any>>,
-    body: any
+    body: any,
+    config: ConfigType
 ) => {
     try {
         const newData = {
             ...body,
         };
 
-        const result = await model.create(newData);
+        const result = await model.create(newData, {
+            returning: true
+        });
+
+        if (body.uploaded_files?.length) {
+            const files = body.uploaded_files.map((file: any) => ({
+                ...file,
+                directionalFinderId: result.id,
+            }));
+            await UploadedFile.bulkCreate(files);
+        }
+
         return !!result;
     } catch (err) {
         console.error('Create error:', err);

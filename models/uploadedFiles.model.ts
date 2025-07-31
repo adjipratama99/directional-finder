@@ -23,8 +23,8 @@ UploadedFile.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            primaryKey: true,
             autoIncrement: true,
+            primaryKey: true,
         },
         file_name: {
             type: DataTypes.STRING(255),

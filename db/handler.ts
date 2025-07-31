@@ -12,6 +12,7 @@ export type ConfigType = {
     findByKey?: string;
     desiredKey?: string[];
     searchKey?: string[];
+    includeModel?: { include: any[] };
     includeData?: boolean;
 };
 
@@ -22,7 +23,7 @@ type HandlerFunction = (
 ) => Promise<any>;
 
 const handlers: Record<RequestType, HandlerFunction> = {
-    create: (model, body) => handleCreate(model, body),
+    create: (model, body, config) => handleCreate(model, body, config!),
     update: (model, body, config) => handleUpdate(model, body, config!),
     delete: (model, body) => handleDelete(model, body),
     get: (model, body, config) =>

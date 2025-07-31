@@ -21,6 +21,7 @@ export default function ModalTypeData({ dataTypes, onDataChange, open, onOpenCha
 
     return (
         <Modal
+            hideX
             open={open}
             content={<ModalContent dataTypes={dataTypes} onOpenChange={onOpenChange} onDataChange={onDataChange} />}
             title="Pilih sumber data"

@@ -6,6 +6,8 @@ import {
     CreationOptional,
 } from 'sequelize';
 import { sequelize } from '@/db/connect';
+import { formatInTimeZone } from 'date-fns-tz';
+import { UploadedFile } from './uploadedFiles.model';
 
 export class DirectionalFinder extends Model<
     InferAttributes<DirectionalFinder>,
@@ -19,6 +21,7 @@ export class DirectionalFinder extends Model<
     declare userCreate: string | null;
     declare tahun_pengadaan: string | null;
     declare wilayah: string | null;
+    declare nama_satuan: string | null;
     declare dateCreate: Date;
     declare dateUpdate: Date | null;
 }
@@ -41,10 +44,12 @@ DirectionalFinder.init(
         status: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 1
         },
         keterangan: {
             type: DataTypes.STRING(255),
             allowNull: false,
+            defaultValue: ""
         },
         userCreate: {
             type: DataTypes.STRING(255),
@@ -58,9 +63,14 @@ DirectionalFinder.init(
             type: DataTypes.STRING(255),
             allowNull: true,
         },
+        nama_satuan: {
+            type: DataTypes.TEXT(),
+            allowNull: true,
+        },
         dateCreate: {
             type: DataTypes.DATE,
             allowNull: false,
+            defaultValue: formatInTimeZone(new Date(), 'UTC', 'yyyy-MM-dd HH:mm:ss')
         },
         dateUpdate: {
             type: DataTypes.DATE,
@@ -74,3 +84,14 @@ DirectionalFinder.init(
     }
 );
 
+DirectionalFinder.hasMany(UploadedFile, {
+    foreignKey: 'directionalFinderId',
+    as: 'uploaded_files',
+});
+
+UploadedFile.belongsTo(DirectionalFinder, {
+    foreignKey: 'directionalFinderId',
+    as: 'directionalFinder',
+    targetKey: 'id',
+    constraints: true
+});

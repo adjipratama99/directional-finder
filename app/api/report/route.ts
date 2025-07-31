@@ -5,6 +5,10 @@ import { message_error } from "@/lib/messages";
 import { Inventory } from "@/models/inventory.model";
 import { SatuanKerja } from "@/models/SatuanKerja.model";
 import _ from "lodash";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
+
+export type SatuanKerjaAttributes = InferAttributes<SatuanKerja>;
+export type SatuanKerjaCreationAttributes = InferCreationAttributes<SatuanKerja>;
 
 export async function POST(req: NextRequest) {
     try {
@@ -16,8 +20,13 @@ export async function POST(req: NextRequest) {
         }
 
         let users: any[] = [];
+        let getSatuanKerja = [] as SatuanKerja[];
 
-        if (params.sumber_data.includes("df")) {
+        if(params?.report) {
+            getSatuanKerja = await SatuanKerja.findAll();
+        }
+
+        if (params.sumber_data.includes("df") && !params?.report) {
             users = await User.findAll({
                 where: {
                     role: "user",
@@ -41,18 +50,46 @@ export async function POST(req: NextRequest) {
                 },
                 perangkat_df: user.directional_finder || []
             }));
+        } else {
+            for await (const data of getSatuanKerja) {
+                const loopingan = await DirectionalFinder.findAll({
+                    attributes: ['tipe_df', 'teknologi', 'tahun_pengadaan', 'nama_satuan'],
+                    include: [
+                        {
+                            model: User,
+                            attributes: [],
+                            as: "creator",
+                            where: {
+                                satuan_wilayah: data.satuan_wilayah,
+                                wilayah: data.wilayah,
+                                nama_satuan: data.nama_satuan,
+                            },
+                            required: false,
+                        },
+                    ],
+                    raw: true,
+                });
+            
+                if(loopingan.length) {
+                    if(loopingan[0].nama_satuan === data.nama_satuan) {
+                        data_user.push({ "detail_wilayah": data, "perangkat_df": loopingan })
+                    } 
+                }
+
+                data_user.push({ "detail_wilayah": data, "perangkat_df": [] })
+            }
         }
 
         // Data inventory (diri sendiri, gak disatuin)
         let data_inventory: any[] = [];
 
-        if (params.sumber_data.includes("inventory")) {
+        if (params.sumber_data.includes("inventory") && !params?.report) {
             const inventoryData = await Inventory.findAll({
                 include: [{
                     model: SatuanKerja,
                     as: "satuan_kerja_data",
                     required: true,
-                    attributes: ["nama_satuan", "satuan_wilayah"],
+                    attributes: ["id", "wilayah", "nama_satuan", "nama_satuan"],
                     ...(params.nama_satuan && {
                         where: { nama_satuan: params.nama_satuan }
                     })
@@ -87,23 +124,26 @@ export async function POST(req: NextRequest) {
             const groupedInventory = _.groupBy(uniqueInventory, 'satuan_wilayah');
             
             // 🚀 Format akhir
-            data_inventory = Object.entries(groupedInventory).map(([wilayah, items]) => ({
-                detail_wilayah: {
-                    id: (items as any)[0]?.satuan_kerja_data?.id ?? null,
-                    satuan_wilayah: wilayah,
-                    wilayah: (items as any)[0]?.satuan_kerja_data?.wilayah ?? null,
-                    nama_satuan: (items as any)[0]?.satuan_kerja_data?.nama_satuan ?? null
-                },
-                inventory: (items as any).map(item => ({
-                    nama: item.nama,
-                    kondisi_perangkat: item.kondisi_perangkat,
-                    satuan_kerja: item.satuan_kerja,
-                    keterangan: item.keterangan,
-                    tipe_df: item.tipe_df,
-                    teknologi: item.teknologi,
-                    tahun_pengadaan: item.tahun_pengadaan
-                }))
-            }));
+            data_inventory = Object.entries(groupedInventory).map(([wilayah, items]) => {
+                const item: { [key: string]: (string|any) } = (items as any)[0]
+                return ({
+                    detail_wilayah: {
+                        id: item?.satuan_kerja_data?.id ?? null,
+                        satuan_wilayah: wilayah,
+                        wilayah: item?.satuan_kerja_data?.wilayah ?? null,
+                        nama_satuan: item?.satuan_kerja_data?.nama_satuan ?? null
+                    },
+                    inventory: (items as any).map(item => ({
+                        nama: item.nama,
+                        kondisi_perangkat: item.kondisi_perangkat,
+                        satuan_kerja: item.satuan_kerja,
+                        keterangan: item.keterangan,
+                        tipe_df: item.tipe_df,
+                        teknologi: item.teknologi,
+                        tahun_pengadaan: item.tahun_pengadaan
+                    }))
+                })
+            });
         }
 
         return NextResponse.json({
@@ -112,7 +152,7 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (err) {
-        console.error(err);
+        console.error("error", err);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

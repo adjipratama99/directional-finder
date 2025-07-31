@@ -2,11 +2,11 @@
 
 import ChangePassword from "@/components/change-password";
 import Header from "@/components/layouts/navbar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/context/MenuContext";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import { cn, getInitials } from "@/lib/utils";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { FaAsterisk, FaBars, FaSignOutAlt, FaTimes } from "react-icons/fa";
 
 export default function SiteLayout({ children }) {
@@ -38,7 +38,7 @@ export default function SiteLayout({ children }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col border-r pr-2 text-sm">
                   <div>{ session?.user.username }</div>
                   {session?.user.nama_satuan && (<div>{ session?.user.nama_satuan }</div>) }
                 </div>
@@ -52,8 +52,8 @@ export default function SiteLayout({ children }) {
                   <ChangePassword />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
-                  <FaSignOutAlt />Keluar
+                <DropdownMenuItem className="cursor-pointer text-red-500 hover:text-red-700! transition-colors duration-300 ease-in-out" onClick={() => signOut()}>
+                  <FaSignOutAlt className="transition-colors duration-300 ease-in-out text-red-500 hover:text-red-700!" />Keluar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

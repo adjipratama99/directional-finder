@@ -90,8 +90,6 @@ export default function ReportPage() {
         enabled: !!typeData.length
     })
 
-    console.log(selectedData)
-
     const handleSetTypeData = (data: string[]) => {
         setHasClearedData(false);
         setTypeData(data);

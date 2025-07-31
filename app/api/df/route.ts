@@ -10,6 +10,7 @@ import { ResponseMessage } from '@/types/general';
 import { authOptions } from '@/lib/authOptions';
 import { getServerSession } from 'next-auth';
 import { requiredKey } from '@/lib/utils';
+import { UploadedFile } from '@/models/uploadedFiles.model';
 
 const modelName = 'DirectionalFinder';
 
@@ -24,53 +25,80 @@ export async function POST(req: NextRequest) {
 
             if (contentType?.includes('multipart/form-data')) {
                 const formData = await req.formData();
-    
+
                 const tipe_df = formData.get('tipe_df')?.toString();
                 const teknologi = formData.get('teknologi')?.toString();
                 const wilayah = formData.get('wilayah')?.toString();
                 const keterangan = formData.get('keterangan')?.toString();
+                const nama_satuan = formData.get('nama_satuan')?.toString();
                 const files = formData.getAll('uploaded_files') as File[];
-    
-                if (!(await requiredKey(await requiredKeyByType(type), { tipe_df, teknologi, wilayah, uploaded_files: files }))) {
-                    return NextResponse.json({ ...message_error, message: "Invalid request parameter" })
-                }
-    
-                const uploadedPaths: { [key: string]: string }[] = [];
-    
-                const uploadDir = join(process.cwd(), 'public', 'uploads');
-                if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
-    
-                for (const file of files) {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const buffer = Buffer.from(arrayBuffer);
-    
-                    const filename = `${Date.now()}-${file.name}`;
-                    const filepath = join(uploadDir, filename);
-    
-                    await writeFile(filepath, buffer);
-                    uploadedPaths.push({ file_name: filename, uploaded_by: session?.user?.username });
-                }
-    
-                const body = {
+
+                const isValid = await requiredKey(await requiredKeyByType(type), {
                     tipe_df,
                     teknologi,
                     wilayah,
+                    uploaded_files: files
+                });
+
+                if (!isValid) {
+                    return NextResponse.json({ ...message_error, message: "Invalid request parameter" });
+                }
+
+                const uploadedPaths: { [key: string]: string }[] = [];
+
+                for (const file of files) {
+                    const filename = `${Date.now()}-${file.name}`;
+                    uploadedPaths.push({ file_name: filename, uploaded_by: session?.user?.username });
+                }
+
+                // 1. Simpan data dulu (tanpa file)
+                const body = {
+                    tipe_df,
+                    teknologi: teknologi?.split(','),
+                    nama_satuan,
+                    wilayah,
                     ...(keterangan && { keterangan }),
-                    uploaded_files: uploadedPaths,
-                    userCreate: session?.user?.username
+                    userCreate: session?.user?.username,
+                    uploaded_files: uploadedPaths
                 };
-    
-                const responseFromHandler = await handlerRequest({
+
+                const savedData = await handlerRequest({
                     body,
                     type: 'create',
                     modelName,
+                    includeModel: {
+                        include: [{
+                            model: UploadedFile,
+                            as: "uploaded_files"
+                        }]
+                    }
                 });
-    
+
+                if (!savedData) {
+                    return NextResponse.json({ ...message_error, message: "Gagal menyimpan data awal" });
+                }
+
+                if (files.length > 0) {
+                    const uploadDir = join(process.cwd(), 'public', 'uploads');
+                    if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+                    let i = 0;
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const buffer = Buffer.from(arrayBuffer);
+
+                        const filename = uploadedPaths[i].file_name
+                        const filepath = join(uploadDir, filename);
+
+                        await writeFile(filepath, buffer);
+                        i++;
+                    }
+                }
+
                 const response: ResponseMessage<any> = {
                     ...message_success,
-                    content: responseFromHandler,
+                    content: savedData
                 };
-    
+
                 return NextResponse.json(response);
             }
         } else {
@@ -84,7 +112,7 @@ export async function POST(req: NextRequest) {
             let searchKey: string[] = [];
     
             if(type === "get") {
-                desiredKey = ["id", "tipe_df", "teknologi", "keterangan", "uploaded_files", "status", "tahun_pengadaan", "dateCreate", "userCreate", "dateUpdate", "wilayah"];
+                desiredKey = ["id", "tipe_df", "teknologi", "keterangan", "uploaded_files", "status", "tahun_pengadaan", "dateCreate", "userCreate", "dateUpdate", "wilayah", "nama_satuan"];
                 searchKey = ["id", "teknologi", "tipe_df", "uploaded_files.uploaded_by", "userCreate"]
             }
 
@@ -99,7 +127,7 @@ export async function POST(req: NextRequest) {
                 ...(searchKey.length && { searchKey }),
             })
 
-            let response: ResponseMessage<any> = {...message_success};
+            let response: ResponseMessage<any> = !request ? {...message_error} : {...message_success}
             response.content = request;
             return NextResponse.json(response)
         }

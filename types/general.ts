@@ -14,6 +14,7 @@ export type DFType = {
     status: number;
     teknologi: string[];
     tipe_df: string;
+    nama_satuan: string;
     keterangan?: string;
     tahun_pengadaan: string;
     uploaded_files: UploadedFileType[]

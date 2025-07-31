@@ -18,8 +18,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ ...message_error, message: "Invalid request parameter" })
         }
 
-        console.log(body)
-
         const request = await handlerRequest({
             body: {...body, userCreate: session?.user?.username,
                 ...(type === "get" && { filters: {...body?.filters, status: [0, 1]} })

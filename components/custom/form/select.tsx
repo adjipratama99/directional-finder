@@ -29,6 +29,7 @@ type ComboBoxProps<T = Option> = {
   className?: string
   fullWidth?: boolean
   groupedOptions?: Record<string, T[]>
+  disableDataNotExist?: boolean
   isMulti?: boolean
   value?: string | string[]
   onChange: (val: string | string[]) => void
@@ -50,6 +51,7 @@ export function Select<T extends Option>({
   isMulti = false,
   value,
   onChange,
+  disableDataNotExist = false,
   isModal = false,
   disabled = false,
   getOptionLabel = (o) => o.text,
@@ -117,7 +119,7 @@ export function Select<T extends Option>({
       return (
         <CommandItem
           key={val}
-          disabled={disabled}
+          disabled={disableDataNotExist ? !option?.exist : disabled}
           onSelect={() => handleChange(val)}
           className={cn(
             classNames?.option?.({ data: option, isSelected }) ??

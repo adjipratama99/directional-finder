@@ -22,6 +22,7 @@ interface ModalProps {
     subTitle?: string;
     footer?: ReactNode;
     className?: string;
+    hideX?: boolean;
     closeButton?: ReactNode;
 }
 
@@ -33,12 +34,13 @@ export function Modal({
     footer,
     className,
     closeButton,
+    hideX = false,
     ...props
 }: ModalProps) {
     return (
         <Dialog {...props}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className={cn("sm:max-w-[425px]", className)}>
+            <DialogContent className={cn("sm:max-w-[425px]", className, hideX ? "[&>button]:hidden" : "")}>
                 <DialogHeader>
                     <DialogTitle className="capitalize">{title}</DialogTitle>
                     {subTitle && <DialogDescription>{subTitle}</DialogDescription>}

@@ -3,7 +3,7 @@
 import { cn, getInitials } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import logo from "@/public/assets/logo_baintelkam.png";
 import ChangePassword from "../change-password";
@@ -12,6 +12,7 @@ import { FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { useSidebar } from "@/context/MenuContext";
 
 export default function Sidebar(): React.JSX.Element {
+    const router = useRouter()
     const { isOpen, toggleSidebar } = useSidebar();
     const { data: session } = useSession();
     const pathname = usePathname();
@@ -40,9 +41,9 @@ export default function Sidebar(): React.JSX.Element {
             {/* Sidebar */}
             <div
                 className={cn(
-                    "fixed top-0 left-0 z-40 h-full w-64 bg-neutral-800 transform transition-transform duration-300 ease-in-out",
+                    "fixed top-0 left-0 z-60 h-full w-64 bg-neutral-800 transform transition-transform duration-300 ease-in-out",
                     isOpen ? "translate-x-0" : "-translate-x-full",
-                    "sm:block"
+                    "sm:block pointer-events-auto"
                 )}
             >
                 <div className="flex flex-col h-full p-4 text-white">
@@ -66,7 +67,8 @@ export default function Sidebar(): React.JSX.Element {
                         {menuList.map((v) =>
                             v.role.includes(session?.user?.role ?? "") && (
                                 <Link
-                                    href={v.url}
+                                    href="#"
+                                    onClick={() => router.push(v.url)}
                                     key={v.label}
                                     className={cn(
                                         "block px-4 py-2 rounded hover:bg-neutral-600 transition",
