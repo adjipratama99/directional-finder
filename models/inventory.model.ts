@@ -6,6 +6,7 @@ import {
     CreationOptional,
 } from 'sequelize';
 import { sequelize } from '@/db/connect';
+import { SatuanKerja } from './SatuanKerja.model';
 
 export class Inventory extends Model<
     InferAttributes<Inventory>,
@@ -16,6 +17,7 @@ export class Inventory extends Model<
     declare tahun_pengadaan: string;
     declare tipe_df: string;
     declare satuan_kerja: string;
+    declare satuan_wilayah: string;
     declare kondisi_perangkat: string;
     declare teknologi: string;
     declare status: number;
@@ -52,6 +54,21 @@ Inventory.init(
             allowNull: false,
             defaultValue: '',
         },
+        satuan_kerja: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: '',
+        },
+        satuan_wilayah: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: '',
+        },
+        kondisi_perangkat: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: '',
+        },
         status: {
             type: DataTypes.SMALLINT,
             allowNull: false,
@@ -77,16 +94,6 @@ Inventory.init(
             allowNull: true,
             defaultValue: null,
         },
-        satuan_kerja: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-            defaultValue: '',
-        },
-        kondisi_perangkat: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-            defaultValue: '',
-        },
     },
     {
         sequelize,
@@ -95,3 +102,9 @@ Inventory.init(
         timestamps: false,
     }
 );
+
+Inventory.belongsTo(SatuanKerja, {
+    foreignKey: "satuan_wilayah",
+    targetKey: "wilayah",
+    as: "satuan_kerja_data"
+});

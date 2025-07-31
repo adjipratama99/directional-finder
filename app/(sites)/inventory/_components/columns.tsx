@@ -49,6 +49,7 @@ export const columnsUser: ColumnDef<Inventory>[] = [
     {
         accessorKey: "keterangan",
         header: "Keterangan",
+        cell: (prop) => <div className="text-wrap max-w-[200px]">{ prop.getValue() as string }</div>
     },
     {
         accessorKey: "status",

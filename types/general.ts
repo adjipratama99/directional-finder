@@ -44,7 +44,27 @@ export interface DetailWilayah {
     nama_satuan: string;
 }
 
-export interface ReportData {
+export interface Inventory {
+    nama: number;
+    keterangan: string;
+    kondisi_perangkat: string;
+    satuan_kerja: string;
+    tahun_pengadaan: string;
+    tipe_df: string;
+    teknologi: string;
+}
+
+export interface ReportDataDF {
     detail_wilayah: DetailWilayah;
     perangkat_df: PerangkatDF[];
+}
+
+export interface ReportDataInventory {
+    detail_wilayah: DetailWilayah;
+    inventory: Inventory[];
+}
+
+export interface Report {
+    data_user: ReportDataDF[];
+    data_inventory: ReportDataInventory[];
 }

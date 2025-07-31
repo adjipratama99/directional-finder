@@ -15,10 +15,10 @@ import React, { ReactNode } from "react";
 
 interface ModalProps {
     title: string;
-    trigger: ReactNode;
+    trigger?: ReactNode;
     content: ReactNode;
     open: boolean;
-    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>
+    onOpenChange?: React.Dispatch<React.SetStateAction<boolean>>
     subTitle?: string;
     footer?: ReactNode;
     className?: string;
