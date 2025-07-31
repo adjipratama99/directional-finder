@@ -1,21 +1,28 @@
+"use client"
+
 import { Label } from "@/components/custom/form/label";
 import { Select } from "@/components/custom/form/select";
 import { Modal } from "@/components/custom/modal";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type DataTypes = {
     dataTypes: string[];
-    onDataChange: React.Dispatch<React.SetStateAction<string[]>>
+    onDataChange: (data: string[]) => void;
+    open: boolean;
+    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ModalTypeData({ dataTypes, onDataChange }: DataTypes): React.JSX.Element {
-    const [open, setOpen] = useState<boolean>(dataTypes.length ? false : true)
+export default function ModalTypeData({ dataTypes, onDataChange, open, onOpenChange }: DataTypes): React.JSX.Element {
+    useEffect(() => {
+        onDataChange([])
+    }, [])
 
     return (
         <Modal
             open={open}
-            content={<ModalContent dataTypes={dataTypes} onOpenChange={setOpen} onDataChange={onDataChange} />}
+            content={<ModalContent dataTypes={dataTypes} onOpenChange={onOpenChange} onDataChange={onDataChange} />}
             title="Pilih sumber data"
         />
     )
@@ -25,6 +32,11 @@ function ModalContent({ dataTypes, onOpenChange, onDataChange }: { dataTypes: st
     const [selectedData, setSelectedData] = useState<string[]>(dataTypes);
 
     const handleSubmit = () => {
+        if(!selectedData.length) {
+            toast.warning("Sumber data belum dipilih.")
+            return
+        }
+        
         onDataChange(selectedData)
         onOpenChange(prev => !prev)
     }

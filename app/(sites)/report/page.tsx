@@ -15,9 +15,11 @@ const PDFClient = dynamic(() => import("@/components/custom/pdf-viewer/index"), 
 });
 
 export default function ReportPage() {
+    const [open, setOpen] = useState<boolean>(true)
     const [data, setData] = useState<Report|null>(null);
     const [selectedData, setSelectedData] = useState<any[]>([]);
     const [typeData, setTypeData] = useState<string[]>([]);
+    const [hasClearedData, setHasClearedData] = useState(false);
     const [nama_satuan, setNamaSatuan] = useState<string>("");
 
     const { data: dataWilayah, isLoading: loadingWilayah } = useCustomQuery({
@@ -58,7 +60,7 @@ export default function ReportPage() {
                         }
                     }
 
-                    if (nama_satuan) {
+                    if (!hasClearedData && nama_satuan) {
                         if (!selectedData.find((r) => r.detail_wilayah.id === d.detail_wilayah.id)) {
                             setSelectedData((prev) => [...prev, d]);
                         }
@@ -75,7 +77,7 @@ export default function ReportPage() {
                         } : null);
                     }
 
-                    if (nama_satuan) {
+                    if (!hasClearedData && nama_satuan) {
                         if (!selectedData.find((r) => r.detail_wilayah.id === d.detail_wilayah.id)) {
                             setSelectedData((prev) => [...prev, d]);
                         }
@@ -88,15 +90,24 @@ export default function ReportPage() {
         enabled: !!typeData.length
     })
 
+    console.log(selectedData)
+
+    const handleSetTypeData = (data: string[]) => {
+        setHasClearedData(false);
+        setTypeData(data);
+    }
+
     return (
         <div className="bg-gray-50 h-[92vh] py-6">
-            <ModalTypeData onDataChange={setTypeData} dataTypes={typeData} />
+            <ModalTypeData open={open} onOpenChange={setOpen} onDataChange={handleSetTypeData} dataTypes={typeData} />
             {
                 (typeData && (data || !isLoading)) ?
                     (<PDFClient
+                        onOpenChange={setOpen}
                         data={data as Report}
                         filter={nama_satuan}
                         dataWilayah={dataWilayah}
+                        onClearData={setHasClearedData}
                         loadingWilayah={loadingWilayah}
                         onChangeFilter={setNamaSatuan}
                         dataSelected={selectedData}

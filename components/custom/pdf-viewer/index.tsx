@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import { FaDownload, FaTimes } from "react-icons/fa";
 import { Select } from "../form/select";
 import { formatInTimeZone } from "date-fns-tz";
+import Confirmation from "../confirmation";
 
 type Props = {
   data: Report;
@@ -19,21 +20,27 @@ type Props = {
     React.SetStateAction<(ReportDataDF | ReportDataInventory)[]>
   >;
   onChangeFilter: React.Dispatch<React.SetStateAction<string>>;
+  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+  onClearData: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function PDFClient({
   data,
   dataWilayah,
   loadingWilayah,
+  onClearData,
   onChangeFilter,
   dataSelected,
   onChangeDataSelected,
+  onOpenChange
 }: Props) {
   const printRef = useRef<HTMLDivElement>(null);
+  const [isFirstSort, setFirstSort] = useState<boolean>(true)
   const [options, setOptions] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
 
   useEffect(() => {
+    if(isFirstSort) {
       const combined = [...(data?.data_user || []), ...(data?.data_inventory || [])];
 
       const existData = combined.map((d) => ({
@@ -54,14 +61,13 @@ export default function PDFClient({
               return newData;
           });
 
-          // ✨ Sort biar yang exist: true di atas
-          newDataWilayah.sort((a, b) => {
-              return (b.exist === true ? 1 : 0) - (a.exist === true ? 1 : 0);
-          });
-
           setOptions(newDataWilayah);
       }
-  }, [data, dataWilayah]);
+
+      setFirstSort(false)
+    }
+}, [isFirstSort, data, dataWilayah]);
+  
 
 
   const downloadPdf = async () => {
@@ -93,52 +99,83 @@ export default function PDFClient({
   };
 
   const handleSatuanWilayah = (val: string[]) => {
-    let value: string = (Array.isArray(val)) ? val[val.length - 1] : val;
-
     setSelectedOption(val);
+    const value = val[val.length - 1];
     
-    if(value) {
+    if (value) {
       onChangeFilter(value);
     } else {
       onChangeDataSelected([]);
     }
-  };
+  };  
 
   const handleClearData = () => {
+    setSelectedOption([])
+    onChangeFilter("")
     onChangeDataSelected([]);
     setSelectedOption([]);
   };
 
+  const confirmChangeSourceData = () => {
+    onClearData(true)
+    handleClearData()
+    onOpenChange(true)
+  }
+
   return (
     <div className="w-full">
-      <div className="flex items-center gap-4 px-4">
-        <Button onClick={downloadPdf}>
-          <FaDownload className="mr-2" />
-          Download PDF
-        </Button>
-        {options && (
-          <Select
-            options={options}
-            isMulti
-            value={selectedOption}
-            disabled={loadingWilayah}
-            onChange={(val) => handleSatuanWilayah(val as string[])}
-            placeholder="Pilih Satuan Wilayah"
+      <div className="flex items-center gap-4 px-4 justify-between">
+        <div className="flex items-center gap-4">
+            <Button onClick={downloadPdf}>
+              <FaDownload className="mr-2" />
+              Download PDF
+            </Button>
+            {options && (
+              <Select
+              options={[...options]
+                .sort((a, b) => (b.exist ? 1 : 0) - (a.exist ? 1 : 0))
+              }
+              isMulti
+              value={selectedOption}
+              disabled={loadingWilayah}
+              onChange={(val) => handleSatuanWilayah(val as string[])}
+              placeholder="Pilih Satuan Wilayah"
+              getOptionLabel={(option) => option.text}
+              getOptionValue={(option) => option.value}
+              classNames={{
+                option: ({ data, isSelected }) =>
+                  `cursor-pointer ${data.exist ? "text-primary font-semibold" : "text-muted-foreground"} ${
+                    isSelected ? "bg-primary/10" : ""
+                  }`,
+                multiValueLabel: () => "text-primary font-medium",
+              }}
+            />            
+            )}
+            {dataSelected && dataSelected.length ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleClearData}
+                disabled={!dataSelected.length}
+              >
+                <FaTimes className="mr-2" />
+                Clear Data
+              </Button>
+            ) : (
+              ""
+            )}
+        </div>
+        {
+          dataSelected.length ?
+          <Confirmation
+            trigger={<Button className="outline" type="button">Pilih Sumber Data</Button>}
+            title="Konfirmasi"
+            message="Yakin ingin mengubah sumber data ? Data yang sudah tampil akan terhapus."
+            onConfirm={() => confirmChangeSourceData()}
           />
-        )}
-        {dataSelected && dataSelected.length ? (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleClearData}
-            disabled={!dataSelected.length}
-          >
-            <FaTimes className="mr-2" />
-            Clear Data
-          </Button>
-        ) : (
-          ""
-        )}
+          :
+          <Button className="outline" type="button" onClick={() => onOpenChange(true)}>Pilih Sumber Data</Button>
+        }
       </div>
 
       <div className="flex justify-center max-h-full overflow-y-scroll mt-4">
