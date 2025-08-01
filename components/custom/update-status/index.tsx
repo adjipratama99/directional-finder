@@ -28,7 +28,6 @@ export default function UpdateStatus({ type, params, status, pureDelete, constan
             setActive(false)
             if(data?.code === 0) {
                 query.invalidateQueries({ queryKey: [constantType] })
-                toast.success(data.message)
             }
 
             return data;
@@ -47,7 +46,6 @@ export default function UpdateStatus({ type, params, status, pureDelete, constan
         setActive(false)
 
         if(response?.code === 0) {
-            toast.success("Success deleting data")
             query.invalidateQueries({ queryKey: [constantType] })
         } else {
             toast.warning(response.message)

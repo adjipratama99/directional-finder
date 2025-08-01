@@ -29,9 +29,6 @@ export function ServerTable<T>({
     const [pageIndex, setPageIndex] = useState(0);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [search, setSearch] = useState("");
-    const initialState = {}
-    if (pagination) initialState["pagination"] = pagination
-    if (sorting) initialState["sorting"] = sorting
 
     const debounceValue = useDebounceValue(search)
 
@@ -39,7 +36,13 @@ export function ServerTable<T>({
         data,
         columns,
         pageCount,
-        state: initialState,
+        state: {
+            pagination: {
+                pageIndex,
+                pageSize: pagination?.pageSize ?? 10,
+            },
+            sorting,
+        },
         manualPagination: true,
         manualSorting: true,
         getCoreRowModel: getCoreRowModel(),
@@ -137,7 +140,7 @@ export function ServerTable<T>({
                         onClick={() => {
                             const newPage = Math.max(pageIndex - 1, 0);
                             setPageIndex(newPage);
-                            onPageChange?.(newPage);
+                            onPaginationChange?.({ pageIndex: newPage, pageSize: pagination?.pageSize ?? 10 });
                         }}
                         disabled={pageIndex === 0}
                         className="px-3 py-1 border rounded disabled:opacity-50"
@@ -148,7 +151,7 @@ export function ServerTable<T>({
                         onClick={() => {
                             const newPage = pageIndex + 1;
                             setPageIndex(newPage);
-                            onPageChange?.(newPage);
+                            onPaginationChange?.({ pageIndex: newPage, pageSize: pagination?.pageSize ?? 10 });
                         }}
                         disabled={pageIndex + 1 >= pageCount}
                         className="px-3 py-1 border rounded disabled:opacity-50"
