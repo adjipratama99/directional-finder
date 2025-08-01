@@ -17,7 +17,7 @@ export class Inventory extends Model<
     declare tahun_pengadaan: string;
     declare tipe_df: string;
     declare satuan_kerja: string;
-    declare satuan_wilayah: string;
+    declare wilayah: string;
     declare kondisi_perangkat: string;
     declare teknologi: string;
     declare status: number;
@@ -59,7 +59,7 @@ Inventory.init(
             allowNull: false,
             defaultValue: '',
         },
-        satuan_wilayah: {
+        wilayah: {
             type: DataTypes.TEXT,
             allowNull: false,
             defaultValue: '',

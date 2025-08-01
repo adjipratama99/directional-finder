@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
                     model: SatuanKerja,
                     as: "satuan_kerja_data",
                     required: true,
-                    attributes: ["id", "wilayah", "nama_satuan", "nama_satuan"],
+                    attributes: ["id", "wilayah", "nama_satuan"],
                     ...(params.nama_satuan && {
                         where: { nama_satuan: params.nama_satuan }
                     })
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
                     "tipe_df",
                     "teknologi",
                     "tahun_pengadaan",
-                    "satuan_wilayah"
+                    "wilayah"
                 ]
             });
             
