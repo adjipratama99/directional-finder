@@ -20,13 +20,8 @@ export async function POST(req: NextRequest) {
         }
 
         let users: any[] = [];
-        let getSatuanKerja = [] as SatuanKerja[];
 
-        if(params?.report) {
-            getSatuanKerja = await SatuanKerja.findAll();
-        }
-
-        if (params.sumber_data.includes("df") && !params?.report) {
+        if (params.sumber_data.includes("df")) {
             users = await User.findAll({
                 where: {
                     role: "user",
@@ -50,40 +45,12 @@ export async function POST(req: NextRequest) {
                 },
                 perangkat_df: user.directional_finder || []
             }));
-        } else {
-            for await (const data of getSatuanKerja) {
-                const loopingan = await DirectionalFinder.findAll({
-                    attributes: ['tipe_df', 'teknologi', 'tahun_pengadaan', 'nama_satuan'],
-                    include: [
-                        {
-                            model: User,
-                            attributes: [],
-                            as: "creator",
-                            where: {
-                                satuan_wilayah: data.satuan_wilayah,
-                                wilayah: data.wilayah,
-                                nama_satuan: data.nama_satuan,
-                            },
-                            required: false,
-                        },
-                    ],
-                    raw: true,
-                });
-            
-                if(loopingan.length) {
-                    if(loopingan[0].nama_satuan === data.nama_satuan) {
-                        data_user.push({ "detail_wilayah": data, "perangkat_df": loopingan })
-                    } 
-                }
-
-                data_user.push({ "detail_wilayah": data, "perangkat_df": [] })
-            }
         }
 
         // Data inventory (diri sendiri, gak disatuin)
         let data_inventory: any[] = [];
 
-        if (params.sumber_data.includes("inventory") && !params?.report) {
+        if (params.sumber_data.includes("inventory")) {
             const inventoryData = await Inventory.findAll({
                 include: [{
                     model: SatuanKerja,
