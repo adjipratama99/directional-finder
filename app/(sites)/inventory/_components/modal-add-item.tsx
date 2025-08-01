@@ -15,6 +15,7 @@ type ParamsType = {
     tahun_pengadaan: string;
     tipe_df: string;
     kondisi_perangkat: string;
+    satuan_wilayah: string;
     satuan_kerja: string;
     teknologi: string[];
     keterangan?: string;
@@ -58,6 +59,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
         nama: "",
         tahun_pengadaan: "",
         tipe_df: "",
+        satuan_wilayah: "",
         teknologi: [],
         kondisi_perangkat: "",
         satuan_kerja: ""
