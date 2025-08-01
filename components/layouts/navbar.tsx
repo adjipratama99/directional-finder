@@ -53,21 +53,19 @@ export default function Sidebar(): React.JSX.Element {
                           <Image src={logo} alt="Logo" width={120} height={120} />
                           <span className="ml-2 font-semibold text-lg">{ process.env.NEXT_PUBLIC_APP_NAME }</span>
                       </div>
-                      <Link
-                        href="#"
+                      <div
                           onClick={() => toggleSidebar()}
                           className="p-2 bg-neutral-800 text-white rounded-md sm:hidden cursor-pointer"
                       >
                           <FaTimes />   
-                      </Link>
+                      </div>
                     </div>
 
                     {/* Menu */}
                     <nav className="flex-1 space-y-2">
                         {menuList.map((v) =>
                             v.role.includes(session?.user?.role ?? "") && (
-                                <Link
-                                    href="#"
+                                <div
                                     onClick={() => router.push(v.url)}
                                     key={v.label}
                                     className={cn(
@@ -76,7 +74,7 @@ export default function Sidebar(): React.JSX.Element {
                                     )}
                                 >
                                     {v.label}
-                                </Link>
+                                </div>
                             )
                         )}
                     </nav>
