@@ -20,7 +20,7 @@ export const handleCreate = async (
         if (body.uploaded_files?.length) {
             const files = body.uploaded_files.map((file: any) => ({
                 ...file,
-                directionalFinderId: result.id,
+                directionalFinderId: (result as any).id,
             }));
             await UploadedFile.bulkCreate(files);
         }
