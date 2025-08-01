@@ -69,7 +69,7 @@ export default function Sidebar(): React.JSX.Element {
                                     onClick={() => router.push(v.url)}
                                     key={v.label}
                                     className={cn(
-                                        "block px-4 py-2 rounded hover:bg-neutral-600 transition",
+                                        "block px-4 py-2 rounded hover:bg-neutral-600 transition cursor-pointer",
                                         pathname === v.url ? "bg-neutral-600" : ""
                                     )}
                                 >
