@@ -15,7 +15,7 @@ type ParamsType = {
     tahun_pengadaan: string;
     tipe_df: string;
     kondisi_perangkat: string;
-    satuan_wilayah: string;
+    wilayah: string;
     satuan_kerja: string;
     teknologi: string[];
     keterangan?: string;
@@ -31,6 +31,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
         callbackResult(res) {
             let groupedOptions: Record<string, Option[]> = {};
             if(res.content?.count) {
+                let i = 0;
                 groupedOptions = res.content.results.reduce((acc, curr) => {
                     const group = curr.satuan_wilayah.toUpperCase();
                     if (!acc[group]) {
@@ -43,10 +44,11 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
                 
                     if (!alreadyExists) {
                         acc[group].push({
-                            value: curr.nama_satuan,
-                            text: curr.nama_satuan,
+                            value: `${curr.nama_satuan}-${curr.wilayah}-${i}`,
+                            text: curr.nama_satuan
                         });
                     }
+                    i++;
 
                     return acc;
                 }, {} as Record<string, Option[]>);
@@ -59,7 +61,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
         nama: "",
         tahun_pengadaan: "",
         tipe_df: "",
-        satuan_wilayah: "",
+        wilayah: "",
         teknologi: [],
         kondisi_perangkat: "",
         satuan_kerja: ""
@@ -84,7 +86,7 @@ export default function ModalAddItem({ onClose }: { onClose: React.Dispatch<Reac
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
-            mutate(params)
+            mutate({...params, satuan_kerja: params.satuan_kerja.split('-')[0], wilayah: params.satuan_kerja.split('-')[1]})
         }}>
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="flex flex-col gap-2">

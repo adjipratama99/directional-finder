@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
                     model: SatuanKerja,
                     as: "satuan_kerja_data",
                     required: true,
-                    attributes: ["id", "wilayah", "nama_satuan"],
+                    attributes: ["id", "wilayah", "satuan_wilayah", "nama_satuan"],
                     ...(params.nama_satuan && {
                         where: { nama_satuan: params.nama_satuan }
                     })
@@ -88,17 +88,18 @@ export async function POST(req: NextRequest) {
             });
             
             // 🔄 Group by satuan_wilayah
-            const groupedInventory = _.groupBy(uniqueInventory, 'satuan_wilayah');
+            const groupedInventory = _.groupBy(uniqueInventory, 'satuan_kerja');
             
             // 🚀 Format akhir
-            data_inventory = Object.entries(groupedInventory).map(([wilayah, items]) => {
+            data_inventory = Object.entries(groupedInventory).map(([nama_satuan, items]) => {
                 const item: { [key: string]: (string|any) } = (items as any)[0]
+                
                 return ({
                     detail_wilayah: {
                         id: item?.satuan_kerja_data?.id ?? null,
-                        satuan_wilayah: wilayah,
+                        satuan_wilayah: item?.satuan_kerja_data?.satuan_wilayah ?? null,
                         wilayah: item?.satuan_kerja_data?.wilayah ?? null,
-                        nama_satuan: item?.satuan_kerja_data?.nama_satuan ?? null
+                        nama_satuan
                     },
                     inventory: (items as any).map(item => ({
                         nama: item.nama,
