@@ -104,7 +104,7 @@ Inventory.init(
 );
 
 Inventory.belongsTo(SatuanKerja, {
-    foreignKey: "satuan_wilayah",
+    foreignKey: "wilayah",
     targetKey: "wilayah",
     as: "satuan_kerja_data"
 });
