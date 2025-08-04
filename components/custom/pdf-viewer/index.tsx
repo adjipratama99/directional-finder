@@ -9,7 +9,7 @@ import type {
 } from "@/types/general";
 // import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
-import { FaDownload, FaFileExcel, FaFilePdf, FaTimes } from "react-icons/fa";
+import { FaDatabase, FaDownload, FaFileExcel, FaFilePdf, FaTimes } from "react-icons/fa";
 import { Select } from "../form/select";
 import { formatInTimeZone } from "date-fns-tz";
 import Confirmation from "../confirmation";
@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { exportReportData } from "@/hooks/useExport";
 import autoTable from 'jspdf-autotable';
+import { useIsMobile } from "@/hooks/useMediaQuery";
 
 type Props = {
   data: Report;
@@ -53,6 +54,8 @@ export default function PDFClient({
   const [options, setOptions] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
 
+  const isMobile = useIsMobile()
+  
   useEffect(() => {
     if (isFirstSort) {
       const combined = [
@@ -295,8 +298,35 @@ export default function PDFClient({
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-4 px-4 justify-between">
-        <div className="flex items-center gap-4">
+      <div className="block sm:hidden mb-4 mx-4">
+        {dataSelected.length ? (
+            <Confirmation
+              trigger={
+                <Button variant="outline" type="button">
+                  <FaDatabase />
+                  Pilih Sumber Data
+                </Button>
+              }
+              title="Konfirmasi"
+              message="Yakin ingin mengubah sumber data ? Data yang sudah tampil akan terhapus."
+              onConfirm={() => confirmChangeSourceData()}
+            />
+          ) : (
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => onOpenChange(true)}
+            >
+              <FaDatabase />
+              Pilih Sumber Data
+            </Button>
+          )}
+      </div>
+      <div className={cn(
+        "flex items-center gap-4 px-4",
+        !isMobile ? "justify-between" : ""
+      )}>
+        <div className="flex items-center w-full justify-between sm:w-auto sm:justify-normal gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button">
@@ -371,26 +401,30 @@ export default function PDFClient({
             ""
           )}
         </div>
-        {dataSelected.length ? (
-          <Confirmation
-            trigger={
-              <Button className="outline" type="button">
-                Pilih Sumber Data
-              </Button>
-            }
-            title="Konfirmasi"
-            message="Yakin ingin mengubah sumber data ? Data yang sudah tampil akan terhapus."
-            onConfirm={() => confirmChangeSourceData()}
-          />
-        ) : (
-          <Button
-            className="outline"
-            type="button"
-            onClick={() => onOpenChange(true)}
-          >
-            Pilih Sumber Data
-          </Button>
-        )}
+        <div className="hidden sm:block">
+          {dataSelected.length ? (
+            <Confirmation
+              trigger={
+                <Button variant="outline" type="button">
+                  <FaDatabase />
+                  Pilih Sumber Data
+                </Button>
+              }
+              title="Konfirmasi"
+              message="Yakin ingin mengubah sumber data ? Data yang sudah tampil akan terhapus."
+              onConfirm={() => confirmChangeSourceData()}
+            />
+          ) : (
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => onOpenChange(true)}
+            >
+              <FaDatabase />
+              Pilih Sumber Data
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-center max-h-full overflow-y-scroll mt-4">
