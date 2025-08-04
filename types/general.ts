@@ -52,7 +52,7 @@ export interface Inventory {
     satuan_kerja: string;
     tahun_pengadaan: string;
     tipe_df: string;
-    teknologi: string;
+    teknologi: string[];
 }
 
 export interface ReportDataDF {

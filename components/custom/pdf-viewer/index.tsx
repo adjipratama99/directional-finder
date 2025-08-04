@@ -7,7 +7,7 @@ import type {
   ReportDataDF,
   ReportDataInventory,
 } from "@/types/general";
-import html2canvas from "html2canvas-pro";
+// import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { FaDownload, FaFileExcel, FaFilePdf, FaTimes } from "react-icons/fa";
 import { Select } from "../form/select";
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { exportReportData } from "@/hooks/useExport";
+import autoTable from 'jspdf-autotable';
 
 type Props = {
   data: Report;
@@ -87,32 +88,186 @@ export default function PDFClient({
   const downloadPdf = async () => {
     if (!printRef.current) return;
   
-    const sections = printRef.current.querySelectorAll(".pdf-section");
     const pdf = new jsPDF("p", "pt", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
   
-    for (let i = 0; i < sections.length; i++) {
-      const canvas = await html2canvas(sections[i] as HTMLElement, {
-        scale: 2,
-        useCORS: true,
+    const titleStyle = {
+      fontSize: 12,
+      textColor: [0, 0, 0] as [number, number, number],
+      fillColor: [182, 210, 214] as [number, number, number],
+      fontStyle: 'bold' as const,
+      halign: 'center' as const,
+    };
+  
+    let cursorY = 40;
+  
+    const dfData = (dataSelected as ReportDataDF[]).filter(w => w.perangkat_df?.length);
+    if (dfData.length) {
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Pengajuan Kebutuhan Alat Directional Finder", pageWidth / 2, cursorY, { align: "center" });
+      cursorY += 20;
+  
+      dfData.forEach((wilayah, idx) => {
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`${wilayah.detail_wilayah.nama_satuan}`, 40, cursorY);
+  
+        cursorY += 15;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(`${wilayah.detail_wilayah.satuan_wilayah} - ${wilayah.detail_wilayah.wilayah}`, 40, cursorY);
+        cursorY += 10;
+  
+        const rows = wilayah.perangkat_df.map((df) => [
+          df.tipe_df || "",
+          df.teknologi?.map((t) => `• ${t.trim()}`).join("\n") || "",
+          df.tahun_pengadaan || "",
+        ]);
+  
+        autoTable(pdf, {
+          startY: cursorY + 10,
+          head: [["Tipe DF", "Teknologi", "Tahun Pengadaan"]],
+          headStyles: titleStyle,
+          body: rows,
+          styles: {
+            font: "helvetica",
+            fontSize: 9,
+            valign: 'middle',
+            cellPadding: 4,
+          },
+          margin: { left: 40, right: 40 },
+          theme: "grid",
+          didDrawPage: (data) => {
+            cursorY = data.cursor!.y + 20;
+          },
+        });
       });
+    }
   
-      const imgData = canvas.toDataURL("image/png");
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const inventoryData = (dataSelected as ReportDataInventory[]).filter(w => w.inventory?.length);
+    if (inventoryData.length) {
+      if (cursorY > 60) pdf.addPage();
+      cursorY = 40;
   
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Monitoring Kondisi Perangkat Directional Finder (DF)", pageWidth / 2, cursorY, { align: "center",  });
+      cursorY += 60;
+  
+      inventoryData.forEach((wilayah, idx) => {
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`${wilayah.detail_wilayah.nama_satuan}`, 40, cursorY);
+        cursorY += 15;
+  
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(`${wilayah.detail_wilayah.satuan_wilayah} - ${wilayah.detail_wilayah.wilayah}`, 40, cursorY);
+        cursorY += 10;
+  
+        const rows = wilayah.inventory.map((item) => [
+          item.nama,
+          item.keterangan,
+          item.kondisi_perangkat,
+          item.tahun_pengadaan,
+          item.tipe_df,
+          item.teknologi?.map((t) => `• ${t.trim()}`).join("\n") || "",
+        ]);
+  
+        autoTable(pdf, {
+          startY: cursorY + 10,
+          head: [["Nama", "Keterangan", "Kondisi", "Tahun", "Tipe", "Teknologi"]],
+          body: rows,
+          styles: {
+            font: "helvetica",
+            fontSize: 9,
+            valign: 'middle',
+            cellPadding: 4,
+          },
+          headStyles: titleStyle,
+          margin: { left: 40, right: 40 },
+          theme: "grid",
+          didDrawPage: (data) => {
+            cursorY = data.cursor!.y + 30;
+          },
+        });
+      });
     }
   
     pdf.save(
-      `${formatInTimeZone(
-        new Date(),
-        "UTC",
-        "yyyy-MM-dd HH:mm:ss"
-      )}-DF-Report.pdf`
+      `${formatInTimeZone(new Date(), "UTC", "yyyy-MM-dd HH:mm:ss")}-DF-Report.pdf`
     );
   };
+  
+
+
+  //html2canvas
+  // const downloadPdf = async () => {
+  //     if (!printRef.current) return;
+
+  //     const sections = printRef.current.querySelectorAll(".pdf-section");
+  //     const pdf = new jsPDF("p", "pt", "a4");
+  //     const pageHeight = pdf.internal.pageSize.getHeight();
+  //     const pageWidth = pdf.internal.pageSize.getWidth();
+
+  //     for (let s = 0; s < sections.length; s++) {
+  //         const section = sections[s] as HTMLElement;
+
+  //         const canvas = await html2canvas(section, {
+  //             scale: 2,
+  //             useCORS: true,
+  //             scrollX: 0,
+  //             scrollY: -window.scrollY,
+  //         });
+
+  //         const ctx = canvas.getContext("2d");
+  //         if (!ctx) continue;
+
+  //         const imgWidth = pageWidth;
+  //         const ratio = imgWidth / canvas.width;
+  //         const imgHeight = canvas.height * ratio;
+  //         const pageImageHeight = pageHeight / ratio;
+  //         let renderedHeight = 0;
+
+  //         let page = 0;
+  //         while (renderedHeight < canvas.height) {
+  //             const sliceCanvas = document.createElement("canvas");
+  //             sliceCanvas.width = canvas.width;
+  //             sliceCanvas.height = Math.min(pageImageHeight, canvas.height - renderedHeight);
+  //             const sliceCtx = sliceCanvas.getContext("2d");
+  //             if (!sliceCtx) break;
+
+  //             sliceCtx.drawImage(
+  //                 canvas,
+  //                 0,
+  //                 renderedHeight,
+  //                 canvas.width,
+  //                 sliceCanvas.height,
+  //                 0,
+  //                 0,
+  //                 canvas.width,
+  //                 sliceCanvas.height
+  //             );
+
+  //             const imgData = sliceCanvas.toDataURL("image/png");
+  //             if (page > 0 || s > 0) pdf.addPage();
+  //             pdf.addImage(imgData, "PNG", 0, 0, imgWidth, sliceCanvas.height * ratio);
+
+  //             renderedHeight += pageImageHeight;
+  //             page++;
+  //         }
+  //     }
+
+  //     pdf.save(
+  //         `${formatInTimeZone(
+  //             new Date(),
+  //             "UTC",
+  //             "yyyy-MM-dd HH:mm:ss"
+  //         )}-DF-Report.pdf`
+  //     );
+  // };
+
 
   const handleSatuanWilayah = (val: string[]) => {
     setSelectedOption(val);
