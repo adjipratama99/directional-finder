@@ -4,6 +4,7 @@ export const GET_REPORT_LIST='get-report-list'
 export const GET_SATUAN_KERJA_LIST='get-satuan-kerja-list'
 export const GET_NAMA_SATUAN_LIST='get-nama-satuan-list'
 export const GET_INVENTORY_LIST='get-inventory-list'
+export const GET_WILAYAH_LIST='get-wilayah-list'
 
 export const UPDATE_STATUS_DATA='update-status-data'
 export const UPDATE_PASSWORD='update-password'

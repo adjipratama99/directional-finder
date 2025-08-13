@@ -18,3 +18,10 @@ export function getInitials(name: string): string {
 export const requiredKey = async (keys: string[], body: Record<string, any>): Promise<boolean> => {
   return keys.every((key) => body.hasOwnProperty(key) && body[key] !== undefined && body[key] !== null)
 }
+
+export function ellipsis(text: string, maxLength?: number): string {
+  let length = maxLength ?? 16
+  if (typeof text !== "string") return "";
+  if (text.length <= length) return text;
+  return text.slice(0, length) + "...";
+}

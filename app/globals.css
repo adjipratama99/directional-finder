@@ -126,3 +126,7 @@
       page-break-inside: avoid;
   }
 }
+
+.bg-primary {
+  @apply bg-gradient-to-b from-neutral-600 to-neutral-800
+}

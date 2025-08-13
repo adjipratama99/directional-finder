@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import logo from "@/public/assets/logo_baintelkam.png";
 import ChangePassword from "../change-password";
-import Link from "next/link";
 import { FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { useSidebar } from "@/context/MenuContext";
 
@@ -26,12 +25,11 @@ export default function Sidebar(): React.JSX.Element {
 
     return (
         <div className="h-screen">
-            {/* Toggle button */}
             {
               !isOpen && (
                 <button
                     onClick={() => toggleSidebar()}
-                    className="fixed top-4 left-4 z-50 p-2 bg-neutral-800 text-white rounded-md sm:hidden"
+                    className="fixed top-4 left-4 z-50 p-2 bg-neutral-800 text-white rounded-md sm:hidden bg-gradient-to-b from-neutral-700 to-neutral-800"
                 >
                     <FaBars />
                 </button>
@@ -41,7 +39,7 @@ export default function Sidebar(): React.JSX.Element {
             {/* Sidebar */}
             <div
                 className={cn(
-                    "fixed top-0 left-0 z-60 h-full w-64 bg-neutral-800 transform transition-transform duration-300 ease-in-out",
+                    "fixed top-0 left-0 z-60 h-full w-64 bg-gradient-to-b from-neutral-600 to-neutral-800 transform transition-transform duration-300 ease-in-out",
                     isOpen ? "translate-x-0" : "-translate-x-full",
                     "sm:block pointer-events-auto"
                 )}
@@ -55,7 +53,7 @@ export default function Sidebar(): React.JSX.Element {
                       </div>
                       <div
                           onClick={() => toggleSidebar()}
-                          className="p-2 bg-neutral-800 text-white rounded-md sm:hidden cursor-pointer"
+                          className="p-2 bg-neutral-800 text-white rounded-md sm:hidden cursor-pointer h-fit bg-gradient-to-b from-neutral-500 to-neutral-800"
                       >
                           <FaTimes />   
                       </div>
@@ -70,7 +68,7 @@ export default function Sidebar(): React.JSX.Element {
                                     key={v.label}
                                     className={cn(
                                         "block px-4 py-2 rounded hover:bg-neutral-600 transition cursor-pointer",
-                                        pathname === v.url ? "bg-neutral-600" : ""
+                                        pathname === v.url ? "bg-neutral-800" : ""
                                     )}
                                 >
                                     {v.label}

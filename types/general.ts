@@ -46,7 +46,9 @@ export interface DetailWilayah {
 }
 
 export interface Inventory {
-    nama: number;
+    id: number;
+    nama: string;
+    wilayah: string;
     keterangan: string;
     kondisi_perangkat: string;
     satuan_kerja: string;

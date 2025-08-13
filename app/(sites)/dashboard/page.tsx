@@ -99,14 +99,14 @@ export default function Dashboard(): React.JSX.Element {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4 w-[600px]">
+                <div className="flex items-center flex-col md:flex-row gap-4 md:w-[600px] w-full">
                     <TitleSection title="Permintaan" />
-                    <div className="w-full max-w-xs sm:max-w-[450px]">
+                    <div className="w-full md:max-w-md sm:max-w-[450px]">
                         <div className="flex items-center gap-4">
                             <Input
                                 type="text"
                                 placeholder="Masukkan kata kunci ..."
-                                className="w-full bg-white"
+                                className="w-full bg-white min-w-[150px] md:min-w-auto"
                                 onChange={(e) => setSearch(e.target.value)}
                                 value={search}
                             />
@@ -156,23 +156,23 @@ export default function Dashboard(): React.JSX.Element {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
-                    {data && data?.pages && (
-                        data.pages.map((page, index) => (
-                            <Fragment key={page.nextId}>
-                                {page.data.map((v) => (
-                                    <CardDF data={v} key={v.id} />
-                                ))}
-                            </Fragment>
-                        ))
-                    )}
-                </div>
-                <div ref={ref} className="text-center mt-7 mb-4">
-                { hasNextPage && loading.map((i, v) => (
-                        <div className="w-full h-[150px] rounded-lg" key={v}>
-                            <Skeleton className="w-full h-full" key={v} />
-                        </div>
-                    )) }
-                </div>
+                {data && data?.pages && (
+                    data.pages.map((page, index) => (
+                        <Fragment key={page.nextId}>
+                            {page.data.map((v) => (
+                                <CardDF data={v} key={v.id} />
+                            ))}
+                        </Fragment>
+                    ))
+                )}
+            </div>
+            <div ref={ref} className="text-center mt-7 mb-4 grid grid-cols-4 gap-4">
+            { hasNextPage && loading.map((i, v) => (
+                    <div className="w-full h-[150px] rounded-lg" key={v}>
+                        <Skeleton className="w-full h-full" key={v} />
+                    </div>
+                )) }
+            </div>
             {!isFetching && (error || (!isFetchingNextPage && !hasNextPage && data?.pages.length === 1 && data?.pages[0]?.data?.length === 0)) ?
                 <div className="col-span-4 text-center italic">- Data not Available -</div>
             : null}
