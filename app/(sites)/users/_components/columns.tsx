@@ -5,12 +5,14 @@ import { User } from "@/models/user.model";
 export type UserAttributes = InferAttributes<User>;
 export type UserCreationAttributes = InferCreationAttributes<User>;
 import { ColumnDef } from "@tanstack/react-table";
+import { formatInTimeZone } from "date-fns-tz";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
 
 export const columnsUser: ColumnDef<User>[] = [
     {
         accessorKey: "dateCreate",
         header: "Created At",
+        cell: ({ getValue }) => formatInTimeZone(new Date(getValue() as Date), 'UTC', 'yyyy-MM-dd')
     },
     {
         accessorKey: "username",

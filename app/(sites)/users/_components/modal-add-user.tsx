@@ -65,17 +65,11 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
             return [];
         }
     })
-    
-    const handleChooseNamaSatuan = (val: string) => {
-        const [id, wilayah, nama_satuan] = val.split('-')
-
-        setParams(prev => ({...prev, wilayah, nama_satuan}))
-    }
 
     return (
         <form onSubmit={(e) => {
             e.preventDefault()
-            mutate(params)
+            mutate({...params, wilayah: params.nama_satuan.split('-')[1], nama_satuan: params.nama_satuan.split('-')[2]})
         }}>
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="flex flex-col gap-2">
@@ -115,6 +109,7 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
                             text: "Polres"
                         }]}
                         placeholder="Pilih Satuan Wilayah"
+                        value={params.satuan_wilayah}
                         onChange={(val) => setParams(prev => ({...prev, satuan_wilayah: val as string}))}
                     />
                 </div>
@@ -124,7 +119,8 @@ export default function ModlaAddUser({ onClose }: { onClose: React.Dispatch<Reac
                         options={dataWilayah ?? []}
                         disabled={isLoading || !dataWilayah}
                         placeholder="Pilih Satuan Wilayah"
-                        onChange={(val) => handleChooseNamaSatuan(val as string)}
+                        value={params.nama_satuan}
+                        onChange={(val) => setParams(prev => ({...prev, nama_satuan: val as string}))}
                     />
                 </div>
             </div>

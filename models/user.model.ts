@@ -21,7 +21,7 @@ export class User extends Model<
     declare satuan_wilayah: string;
     declare wilayah: string;
     declare nama_satuan: string;
-    declare dateUpdate: Date | null;
+    declare dateUpdate: Date | string | null;
     declare dateCreate: CreationOptional<Date>;
 }
 
