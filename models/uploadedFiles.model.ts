@@ -27,7 +27,7 @@ UploadedFile.init(
             primaryKey: true,
         },
         file_name: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.TEXT(),
             allowNull: false,
             unique: true,
         },

@@ -47,7 +47,7 @@ DirectionalFinder.init(
             defaultValue: 1
         },
         keterangan: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.TEXT(),
             allowNull: false,
             defaultValue: ""
         },
