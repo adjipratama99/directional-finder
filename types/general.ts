@@ -18,6 +18,7 @@ export type DFType = {
     keterangan?: string;
     tahun_pengadaan: string;
     uploaded_files: UploadedFileType[]
+    userCreate: string;
 }
 
 export type PDFViewerParams = {

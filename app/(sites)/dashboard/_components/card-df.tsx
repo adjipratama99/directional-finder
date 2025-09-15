@@ -23,7 +23,7 @@ export default function CardDF({ data }: { data: DFType }): React.JSX.Element {
     <Modal
       open={isOpen}
       onOpenChange={setOpen}
-      title={`Rincian ${data.tipe_df} oleh ${data.uploaded_files[0].uploaded_by}`}
+      title={`Rincian ${data.tipe_df} oleh ${data.uploaded_files[0]?.uploaded_by || data?.userCreate}`}
       trigger={
         <Card
           className={cn(
